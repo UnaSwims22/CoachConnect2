@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Discover, evaluate and compare sports coaches with CoachConnect">
     <title> CoachConnect | Find the right coach for you</title>
-    <script src=""></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="module" src="/js/main.js"></script>
 
 </head>
 
 <body>
-    <header class=""site-header>
-        <a class="logo" href="./index.html">COACH <span>CONNECT</span></a>
-        <button class="menu-toggle" type="button">Menu</button>
-        <nav id="primary-nav" class="primary-nav">
-            <a href="./index.html">Home</a>
+    <header class="site-header">
+        <a class="logo" href="./index.html">COACH<span>CONNECT</span></a>
+        <button class="menu-toggle" type="button"aria-expanded="false" aria-controls="primary-nav" >Menu</button>
+        <nav id="primary-nav" class="primary-nav"aria-label="Main navigation" >
+            <a href="./index.html" aria-current="page" >Home</a>
             <a href="./find-coach.html">Find a coach</a>
             <a href="./my-sessions.html">My sessions</a>
         </nav>
@@ -35,7 +39,7 @@
         </section>
     </main>
 
-    <footer class="site-footer"><span>© 2026 CoachConnect</span><span>Find your next step.</span></footer>
+    <footer class="site-footer"><span>© 2026 CoachConnect </span><span>Find your next step.</span></footer>
     
 </body>
 </html>
