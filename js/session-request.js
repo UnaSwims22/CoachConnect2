@@ -1,4 +1,4 @@
-import { coaches } from "./coaches-data.js";
+import { supabase } from "./supabase.js";
 
 // Get the page elements.
 const form = document.querySelector("#session-request-form");
@@ -11,34 +11,80 @@ const coachDetails = document.querySelector("#request-coach-details");
 const coachPrice = document.querySelector("#request-coach-price");
 const sessionType = document.querySelector("#session-type");
 
-// Read the selected coach ID from the URL.
+const dateInput = document.querySelector("#session-date");
+const submitButton = form.querySelector('button[type="submit"]');
+
+// Read the selected coach's prototype ID from the URL.
 const params = new URLSearchParams(window.location.search);
 const coachId = Number(params.get("coach"));
 
-// Find the matching coach in the shared data.
-const coach = coaches.find((item) => item.id === coachId);
-
-// Show a message if something goes wrong.
-function showStatus(message, isError = false) {
-  statusMessage.hidden = false;
-  statusMessage.textContent = message;
-  statusMessage.classList.toggle("notice-error", isError);
-}
+let coach = null;
 
 // Set the earliest selectable date to today.
-const dateInput = document.querySelector("#session-date");
 const today = new Date();
+
 const localToday = new Date(
   today.getTime() - today.getTimezoneOffset() * 60000
 ).toISOString().split("T")[0];
 
 dateInput.min = localToday;
 
-// Display the selected coach.
-function displayCoach() {
-  if (!coach) {
+// Display status messages.
+function showStatus(message, isError = false) {
+  statusMessage.hidden = false;
+  statusMessage.textContent = message;
+  statusMessage.classList.toggle("notice-error", isError);
+}
+
+// Show a sign-in link when the athlete is not authenticated.
+function showLoginMessage() {
+  statusMessage.hidden = false;
+  statusMessage.classList.remove("notice-error");
+  statusMessage.replaceChildren();
+
+  statusMessage.append(
+    document.createTextNode(
+      "You need to sign in before requesting a session. "
+    )
+  );
+
+  const loginLink = document.createElement("a");
+  loginLink.href = "./auth.html";
+  loginLink.textContent = "Go to Log in / Sign up";
+
+  statusMessage.append(loginLink);
+}
+
+// Load the selected coach from Supabase.
+async function loadCoach() {
+  if (!Number.isInteger(coachId) || coachId <= 0) {
+    showStatus("Please select a valid coach from Find a Coach.", true);
+    form.hidden = true;
+    return;
+  }
+
+  showStatus("Loading coach details...");
+
+  const { data, error } = await supabase
+    .from("coaches")
+    .select(`
+      id,
+      prototype_id,
+      name,
+      location,
+      hourly_rate,
+      session_types,
+      coach_sports(sport)
+    `)
+    .eq("prototype_id", coachId)
+    .eq("is_active", true)
+    .single();
+
+  if (error || !data) {
+    console.error("Coach loading error:", error);
+
     showStatus(
-      "We couldn't find the selected coach. Please return to Find a Coach and select a profile.",
+      "We couldn't load this coach. Please return to Find a Coach and try again.",
       true
     );
 
@@ -46,41 +92,61 @@ function displayCoach() {
     return;
   }
 
+  // Keep the actual Supabase UUID in coach.id.
+  coach = {
+    id: data.id,
+    prototypeId: data.prototype_id,
+    name: data.name,
+    location: data.location,
+    price: Number(data.hourly_rate),
+    sport: data.coach_sports?.[0]?.sport || "Sport",
+    sessions: data.session_types || []
+  };
+
   document.title = `Request ${coach.name} | CoachConnect`;
 
   coachName.textContent = coach.name;
   coachDetails.textContent = `${coach.sport} · ${coach.location}`;
   coachPrice.textContent = `Session price: R${coach.price}`;
 
-  // Use the session formats already defined for this coach.
+  // Populate the session-type dropdown.
+  sessionType.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Select a session type";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+
+  sessionType.append(placeholder);
+
   coach.sessions.forEach((session) => {
     const option = document.createElement("option");
     option.value = session;
     option.textContent = session;
     sessionType.append(option);
   });
-}
 
-// Save the request in the browser for this prototype.
-function saveRequest(request) {
-  const savedRequests = JSON.parse(
-    localStorage.getItem("coachconnectRequests") || "[]"
-  );
-
-  savedRequests.push(request);
-
-  localStorage.setItem(
-    "coachconnectRequests",
-    JSON.stringify(savedRequests)
-  );
+  statusMessage.hidden = true;
 }
 
 // Handle form submission.
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!coach) {
-    showStatus("A valid coach must be selected before submitting.", true);
+    showStatus("Please select a valid coach before submitting.", true);
+    return;
+  }
+
+  // Check that an athlete is signed in.
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    showLoginMessage();
     return;
   }
 
@@ -88,64 +154,90 @@ form.addEventListener("submit", (event) => {
   const formData = new FormData(form);
 
   const selectedDate = formData.get("date");
+  const selectedTime = formData.get("time");
+  const selectedSessionType = formData.get("sessionType");
+  const preferredLocation = formData.get("location")?.trim() || "";
+  const message = formData.get("message")?.trim() || "";
 
-  // Check that the selected date is not in the past.
-  if (selectedDate < localToday) {
+  // Validate the selected date.
+  if (!selectedDate || selectedDate < localToday) {
     showStatus("Please select today or a future date.", true);
     return;
   }
 
-  // Create a session request object.
-  const request = {
-    id: Date.now(),
-    coachId: coach.id,
-    coachName: coach.name,
-    sport: coach.sport,
-    price: coach.price,
-    sessionType: formData.get("sessionType"),
-    date: selectedDate,
-    time: formData.get("time"),
-    location: formData.get("location").trim(),
-    message: formData.get("message").trim(),
-    status: "Pending",
-    createdAt: new Date().toISOString()
-  };
-
-  // Store the request in the browser.
-  try {
-    saveRequest(request);
-  } catch (error) {
-    showStatus(
-      "Your request could not be saved in this browser. Please try again.",
-      true
-    );
+  // Validate the other required fields.
+  if (
+    !selectedTime ||
+    !selectedSessionType ||
+    !preferredLocation
+  ) {
+    showStatus("Please complete all required fields.", true);
     return;
   }
 
-  // Display the confirmation screen.
-  requestContent.hidden = true;
-  confirmation.hidden = false;
+  // Prevent repeated submissions while the request is being saved.
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
 
-  document.querySelector("#confirmation-message").textContent =
-    `Your session request for ${coach.name} has been recorded. Its current status is Pending.`;
+  showStatus("Saving your session request...");
 
-  // Animate the confirmation using GSAP, if available.
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    import("https://esm.sh/gsap@3.13.0")
-      .then(({ gsap }) => {
-        gsap.from(".request-confirmation > *", {
-          y: 15,
-          opacity: 0,
-          duration: 0.4,
-          stagger: 0.08,
-          ease: "power2.out"
-        });
-      })
-      .catch(() => {
-        // The confirmation still works if GSAP cannot load.
+  try {
+    // Save the request directly to Supabase.
+    const { error } = await supabase
+      .from("session_requests")
+      .insert({
+        athlete_id: user.id,
+        coach_id: coach.id,
+        requested_date: selectedDate,
+        requested_time: selectedTime,
+        session_type: selectedSessionType,
+        preferred_location: preferredLocation,
+        message: message,
+        status: "pending"
       });
+
+    if (error) {
+      throw error;
+    }
+
+    // Display the confirmation screen.
+    statusMessage.hidden = true;
+    requestContent.hidden = true;
+    confirmation.hidden = false;
+
+    document.querySelector("#confirmation-message").textContent =
+      `Your session request for ${coach.name} has been saved. Its current status is Pending.`;
+
+    // Animate the confirmation using GSAP, if available.
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      import("https://esm.sh/gsap@3.13.0")
+        .then(({ gsap }) => {
+          gsap.from(".request-confirmation > *", {
+            y: 15,
+            opacity: 0,
+            duration: 0.4,
+            stagger: 0.08,
+            ease: "power2.out"
+          });
+        })
+        .catch(() => {
+          // The confirmation still works if GSAP cannot load.
+        });
+    }
+
+  } catch (error) {
+    console.error("Session request error:", error);
+
+    showStatus(
+      "Your request could not be saved. Please try again.",
+      true
+    );
+
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit Request";
   }
 });
 
 // Load the selected coach when the page opens.
-displayCoach();
+loadCoach();

@@ -1,0 +1,168 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sign in or register for CoachConnect.">
+
+  <title>Account | CoachConnect</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="../js/auth.js"></script>
+</head>
+
+<body>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="site-header">
+    <a class="logo" href="/html/index.html" aria-label="CoachConnect home">
+      <span class="logo-mark" aria-hidden="true">C</span>
+      <span>COACH<span class="logo-accent">CONNECT</span></span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Main navigation">
+      <a href="/html/index.html">Home</a>
+      <a href="/html/find-coach.html">Find a coach</a>
+      <a href="/html/my-sessions.html">My sessions</a> 
+      <!--<a href="/html/auth.html">Account</a> -->
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-shell auth-page">
+
+    <section class="auth-intro">
+      <p class="eyebrow">COACHCONNECT ACCOUNT</p>
+      <h1>Your coaching journey starts here.</h1>
+      <p class="page-lead">
+        Create an account to submit and manage your coaching session requests.
+      </p>
+    </section>
+
+    <section class="auth-card">
+
+      <div class="auth-tabs">
+        <button
+          type="button"
+          class="auth-tab active"
+          id="show-login"
+          aria-pressed="true">
+          LOG IN
+        </button>
+
+        <button
+          type="button"
+          class="auth-tab"
+          id="show-register"
+          aria-pressed="false">
+          REGISTER
+        </button>
+      </div>
+
+      <div id="auth-message" class="notice" role="status" aria-live="polite" hidden></div>
+
+      <!-- Login form -->
+      <form id="login-form" class="auth-form">
+
+        <h2>Welcome back.</h2>
+
+        <div class="form-field">
+          <label for="login-email">Email address</label>
+          <input
+            type="email"
+            id="login-email"
+            name="email"
+            autocomplete="email"
+            required>
+        </div>
+
+        <div class="form-field">
+          <label for="login-password">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            name="password"
+            autocomplete="current-password"
+            required>
+        </div>
+
+        <button class="button button-accent" type="submit">
+          LOG IN
+        </button>
+
+      </form>
+
+      <!-- Registration form -->
+      <form id="register-form" class="auth-form" hidden>
+
+        <h2>Create your account.</h2>
+
+        <div class="form-field">
+          <label for="register-name">Full name</label>
+          <input
+            type="text"
+            id="register-name"
+            name="fullName"
+            autocomplete="name"
+            required>
+        </div>
+
+        <div class="form-field">
+          <label for="register-email">Email address</label>
+          <input
+            type="email"
+            id="register-email"
+            name="email"
+            autocomplete="email"
+            required>
+        </div>
+
+        <div class="form-field">
+          <label for="register-password">Password</label>
+          <input
+            type="password"
+            id="register-password"
+            name="password"
+            autocomplete="new-password"
+            minlength="8"
+            required>
+        </div>
+
+        <button class="button button-accent" type="submit">
+          CREATE ACCOUNT
+        </button>
+
+      </form>
+
+      <!-- Logged-in account information -->
+      <div id="account-panel" hidden>
+        <h2>You're signed in.</h2>
+        <p id="account-name"></p>
+
+        <a class="button button-accent" href="/html/my-sessions.html">
+          VIEW MY SESSIONS
+        </a>
+
+        <button id="logout-button" class="button button-cancel" type="button">
+          LOG OUT
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 CoachConnect</span>
+    <span>Find your next step.</span>
+  </footer>
+
+  
+
+</body>
+</html>

@@ -1,18 +1,37 @@
+// Supabase project credentials.
 const SUPABASE_URL = "https://oanbtzteruovfjnsoowp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Qu-RcdwiPFJ2PAdFaEIM8w_tOg0eWcw";
 
-let supabase = null;
+// Import the Supabase client library.
+const { createClient } = await import(
+  "https://esm.sh/@supabase/supabase-js@2"
+);
 
-if (
-    SUPABASE_URL.startsWith("https://oanbtzteruovfjnsoowp.supabase.co") &&
-    !SUPABASE_URL.includes("https://oanbtzteruovfjnsoowp.supabase.co") &&
-    SUPABASE_ANON_KEY &&
-    !SUPABASE_ANON_KEY.includes("sb_publishable_Qu-RcdwiPFJ2PAdFaEIM8w_tOg0eWcw")
-) {
-    const { createClient } = await import(
-        "https://esm.sh/@supabase/supabase-js@2"
-    );
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
+// Connect to Supabase.
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-export {supabase};
+// Make the client available to other JavaScript files.
+export { supabase };
+
+
+
+
+
+//let supabase = null;
+
+//if (
+  //  SUPABASE_URL.startsWith("https://oanbtzteruovfjnsoowp.supabase.co") &&
+    //!SUPABASE_URL.includes("https://oanbtzteruovfjnsoowp.supabase.co") &&
+   // SUPABASE_ANON_KEY &&
+   // !SUPABASE_ANON_KEY.includes("sb_publishable_Qu-RcdwiPFJ2PAdFaEIM8w_tOg0eWcw")
+//) {
+ //   const { createClient } = await import(
+ //       "https://esm.sh/@supabase/supabase-js@2"
+  //  );
+ //  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+//}
+
+//export {supabase};
