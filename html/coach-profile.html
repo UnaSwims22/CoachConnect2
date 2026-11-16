@@ -9,24 +9,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
-  <script type="module" src="/js/main.js"></script>
-  <script type="modile" src="/js/coach-profile.js"></script>
+  
+  <script type="module" src="../js/main.js"></script>
+  <script type="module" src="../js/coach-profile.js"></script>
+ 
 </head>
 
 <body>
-  <header class="site-header">
-    <a class="logo" href="/html/index.html">COACH<span>CONNECT</span></a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-    <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-      <a href="/html/index.html">Home</a>
-      <a href="/html/find-coach.html">Find a coach</a>
-      <a href="/html/my-sessions.html">My sessions</a>
-    </nav>
-  </header>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header">
+        <a class="logo" href="/html/index.html" aria-label="CoachConnect home">
+            <span class="logo-mark" aria-hidden="true">C</span>
+            <span>COACH<span class="logo-accent">CONNECT</span></span> <!--bring CoachConnect together-->    
+       </a>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+            <span class="menu-toggle-label">Menu</span>
+            <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+        </button>
+
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+            <a href="/html/index.html" aria-current="page" >Home</a>
+            <a href="/html/find-coach.html">Find a coach</a>
+            <a href="/html/my-sessions.html">My sessions</a>
+        </nav>
+    </header>
+
+  
 
   <main id="main-content" class="profile-page">
     <div class="content-width profile-topline">
-      <a class="text-link" href="/html/find-coach.html">Back to coaches</a>
+      <a class="text-link" href="/html/find-coach.html"> Back to coaches</a>
       <p class="eyebrow">
         <span class="eyebrow-line"></span> COACH PROFILE /
         <span id="profile-sport-label">LOADING</span>
@@ -41,15 +56,15 @@
         <div class="profile-hero-copy">
           <p class="profile-location" id="profile-location"></p>
           <h1 id="profile-name"></h1>
-          <p class="profile-focus" id="profile-location"></p>
+          <p class="profile-focus" id="profile-focus"></p>
           <p class="profile-intro" id="profile-bio"></p>
           <div class="profile-hero-actions">
-            <a class="button button-accent" id="request-session-link" href="/html/my-sessions.html">REQUEST A SESSION <span aria-hidden="true"></span></a>
+            <a class="button button-accent" id="request-session-link" href="/html/session-request.html">REQUEST A SESSION <span aria-hidden="true"></span></a>
             <a class="text-link" href="/html/find-coach.html">Compare other coaches</a>
           </div>
         </div>
         <figure class="profile-portrait">
-          <img src="" alt="">
+          <img id="profile-image" alt="">
           <figcaption id="profile-image-caption"></figcaption>
         </figure>
       </section>
@@ -109,5 +124,4 @@
     <span>Find your next step.</span>
   </footer>
 </body>
-
 </html>

@@ -54,3 +54,4 @@ if (supabase) {
 } else {
     console.info("CoachConnnect is running without Supabase credentials");
 }
+

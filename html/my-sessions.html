@@ -9,25 +9,57 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
-  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="../js/main.js"></script>
+  <script type="module" src="../js/my-sessions.js"></script>
 </head>
 
 <body>
-  <header class="site-header">
-    <a class="logo" href="/html/index.html">COACH<span>CONNECT</span></a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-    <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-      <a href="/html/index.html">Home</a>
-      <a href="/html/find-coach.html">Find a coach</a>
-      <a href="/html/my-sessions.html" aria-current="page">My sessions</a>
-    </nav>
-  </header>
 
-  <main class="page-shell">
+   <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header">
+        <a class="logo" href="/html/index.html" aria-label="CoachConnect home">
+            <span class="logo-mark" aria-hidden="true">C</span>
+            <span>COACH<span class="logo-accent">CONNECT</span></span> <!--bring CoachConnect together-->    
+       </a>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+            <span class="menu-toggle-label">Menu</span>
+            <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+        </button>
+
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+            <a href="/html/index.html" aria-current="page" >Home</a>
+            <a href="/html/find-coach.html">Find a coach</a>
+            <a href="/html/my-sessions.html">My sessions</a>
+        </nav>
+    </header>
+
+  
+  <main id="main-content" class="page-shell my-sessions-page">
     <p class="eyebrow">YOUR COACHING ACTIVITY</p>
     <h1>My sessions.</h1>
     <p class="page-lead">Keep track of the coaching sessions you have requested.</p>
-    <div id="sessions-status" class="notice" role="status"></div>
+    
+
+    <section class="sessions-section" aria-labelledby="sessions-heading">
+    <div class="sessions-section-heading">
+      <div>
+        <p class="eyebrow">YOUR REQUESTS</p>
+        <h2 id="sessions-heading">Session overview</h2>
+      </div>
+
+      <a class="button button-accent" href="/html/find-coach.html">
+        FIND A COACH
+      </a>
+    </div>
+
+    <div id="sessions-status" class="notice" role="status" aria-live="polite">
+      Loading your session requests...
+    </div>
+
+    <div id="sessions-list" class="sessions-list"></div>
+  </section>
   </main>
 
   <footer class="site-footer">

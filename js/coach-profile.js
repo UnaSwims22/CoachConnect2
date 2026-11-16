@@ -60,9 +60,12 @@ function renderCoach(coach) {
   });
 
   // Pass the selected coach ID forward so the session-request milestone can use it.
-  const requestUrl = `my-sessions.html?coach=${encodeURIComponent(coach.id)}`;
+  const requestUrl = `session-request.html?coach=${encodeURIComponent(coach.id)}`;
+
   document.querySelector("#request-session-link").href = requestUrl;
+
   document.querySelector("#request-session-card").href = requestUrl;
+
 
   statusMessage.hidden = true;
   profile.hidden = false;
@@ -83,13 +86,14 @@ function renderCoach(coach) {
 const params = new URLSearchParams(window.location.search);
 const coachId = Number(params.get("id"));
 
-if (!params.has("id") || !Number.isInteger(coachId) || coachId < 1) {
-  showStatus("No coach was selected. Return to Find a Coach and choose a profile.", true);
-} else {
-  const coach = coaches.find((item) => item.id === coachId);
+  if (!params.has("id") || !Number.isInteger(coachId) || coachId < 1) {
+    showStatus("No coach was selected. Return to Find a Coach and choose a profile.", true);
+  } else {
+    const coach = coaches.find((item) => item.id === coachId);
   if (coach) {
     renderCoach(coach);
   } else {
     showStatus("We couldn't find that coach. The profile may have moved or the link may be incorrect.", true);
   }
 }
+

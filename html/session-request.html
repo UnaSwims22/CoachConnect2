@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request a Session | CoachConnect</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="module" src="../js/session-request.js"></script>
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header">
+        <a class="logo" href="/html/index.html" aria-label="CoachConnect home">
+            <span class="logo-mark" aria-hidden="true">C</span>
+            <span>COACH<span class="logo-accent">CONNECT</span></span> <!--bring CoachConnect together-->    
+       </a>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+            <span class="menu-toggle-label">Menu</span>
+            <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+        </button>
+
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+            <a href="/html/index.html" aria-current="page" >Home</a>
+            <a href="/html/find-coach.html">Find a coach</a>
+            <a href="/html/my-sessions.html">My sessions</a>
+        </nav>
+    </header>
+
+    <main class="content-width session-request-page">
+    <section class="session-request-heading">
+      <p class="eyebrow">COACHCONNECT / SESSION REQUEST</p>
+      <h1>Request a session</h1>
+      <p>
+        Tell the coach when and how you would prefer to train.
+        Your request will be sent as pending until it is reviewed.
+      </p>
+    </section>
+
+    <p id="request-status" class="request-status" role="status" hidden></p>
+
+    <section id="request-content" class="request-layout">
+      <div class="request-coach-summary">
+        <p class="eyebrow">YOUR SELECTED COACH</p>
+        <h2 id="request-coach-name">Loading coach...</h2>
+        <p id="request-coach-details"></p>
+        <p id="request-coach-price"></p>
+      </div>
+
+      <form id="session-request-form" class="session-request-form">
+        <div class="form-heading">
+          <h2>Session details</h2>
+          <p>Fields marked with * are required.</p>
+        </div>
+
+        <div class="form-field">
+          <label for="session-type">Session format *</label>
+          <select id="session-type" name="sessionType" required>
+            <option value="">Select a session format</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="session-date">Preferred date *</label>
+          <input id="session-date" name="date" type="date" required>
+        </div>
+
+        <div class="form-field">
+          <label for="session-time">Preferred time *</label>
+          <input id="session-time" name="time" type="time" required>
+        </div>
+
+        <div class="form-field">
+          <label for="session-location">Preferred location *</label>
+          <input
+            id="session-location"
+            name="location"
+            type="text"
+            placeholder="e.g. Sandton, Johannesburg"
+            required
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="session-message">Message to the coach (optional)</label>
+          <textarea
+            id="session-message"
+            name="message"
+            rows="4"
+            placeholder="Tell the coach about your goals or anything they should know before the session."
+          ></textarea>
+        </div>
+
+        <p class="request-disclaimer">
+          Submitting this form sends a request only. Your session is not
+          confirmed until the coach accepts it.
+        </p>
+
+        <button class="button button-accent" type="submit">
+          SUBMIT SESSION REQUEST
+        </button>
+
+        <a class="text-link" href="/html/find-coach.html">Back to Find a Coach</a>
+      </form>
+    </section>
+
+    <section id="request-confirmation" class="request-confirmation" hidden>
+      <p class="eyebrow">REQUEST SUBMITTED</p>
+      <h2>Your request has been recorded.</h2>
+      <p id="confirmation-message"></p>
+      <span class="request-pending-label">PENDING</span>
+      <p>
+        This is not a confirmed booking. The coach must review and accept
+        your request first.
+      </p>
+      <a class="button button-accent" href="/html/my-sessions.html">
+        VIEW MY SESSIONS
+      </a>
+      <a class="text-link" href="/html/find-coach.html">Find another coach</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+        <a class="footer-logo" href="/html/index.html">COACH<span>CONNECT</span></a>
+        <p>Find your next step.</p>
+        <p>© 2026 CoachConnect</p>
+    </footer>
+</body>
+</html>
