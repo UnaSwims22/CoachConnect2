@@ -20,6 +20,77 @@ const coachId = Number(params.get("coach"));
 
 let coach = null;
 
+
+
+let gsapPromise;
+
+function loadGSAP() {
+  if (!gsapPromise) {
+    gsapPromise = import("https://esm.sh/gsap@3.13.0");
+  }
+
+  return gsapPromise;
+}
+
+// Animate the Request a Session page when coach details load.
+async function animateRequestPage() {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (reduceMotion) return;
+
+  try {
+    const { gsap } = await loadGSAP();
+
+    const timeline = gsap.timeline({
+      defaults: {
+        ease: "power2.out"
+      }
+    });
+
+    timeline
+      // Introduce the page heading.
+      .from(".session-request-heading .eyebrow", {
+        y: 15,
+        opacity: 0,
+        duration: 0.3
+      })
+
+      // Reveal the main heading.
+      .from(".session-request-heading h1", {
+        y: 25,
+        opacity: 0,
+        duration: 0.45
+      }, "-=0.1")
+
+      // Reveal the supporting description.
+      .from(".session-request-heading > p:last-child", {
+        y: 15,
+        opacity: 0,
+        duration: 0.3
+      }, "-=0.15")
+
+      // Introduce the selected coach summary.
+      .from(".request-coach-summary", {
+        y: 20,
+        opacity: 0,
+        duration: 0.4
+      }, "-=0.05")
+
+      // Reveal the form fields in sequence.
+      .from(".session-request-form > *", {
+        y: 12,
+        opacity: 0,
+        duration: 0.3,
+        stagger: 0.06
+      }, "-=0.15");
+
+  } catch (error) {
+    console.info("Request page animation unavailable.", error);
+  }
+}
+
 // Set the earliest selectable date to today.
 const today = new Date();
 
@@ -128,6 +199,8 @@ async function loadCoach() {
   });
 
   statusMessage.hidden = true;
+
+  animateRequestPage();
 }
 
 // Handle form submission.
@@ -208,12 +281,12 @@ form.addEventListener("submit", async (event) => {
     document.querySelector("#confirmation-message").textContent =
       `Your session request for ${coach.name} has been saved. Its current status is Pending.`;
 
-    // Animate the confirmation using GSAP, if available.
+    // Animate the confirmation screen
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      import("https://esm.sh/gsap@3.13.0")
+      loadGSAP()
         .then(({ gsap }) => {
           gsap.from(".request-confirmation > *", {
-            y: 15,
+            y: 18,
             opacity: 0,
             duration: 0.4,
             stagger: 0.08,
@@ -221,9 +294,10 @@ form.addEventListener("submit", async (event) => {
           });
         })
         .catch(() => {
-          // The confirmation still works if GSAP cannot load.
+          // Confirmation remains usable if GSAP is unavailable.
         });
     }
+
 
   } catch (error) {
     console.error("Session request error:", error);

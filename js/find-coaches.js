@@ -19,6 +19,70 @@ const comparisonContent = $("#comparison-content");
 // This array will be populated using Supabase.
 let coaches = [];
 
+// Track whether the directory has rendered for the first time.
+let hasRenderedDirectory = false;
+
+// Load GSAP once and reuse it for future animations.
+let gsapPromise;
+
+function animateDirectoryCards(isInitialLoad) {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  // Do not animate if the user prefers reduced motion.
+  if (reduceMotion) return;
+
+  const cards = grid.querySelectorAll(".directory-card");
+
+  if (!cards.length) return;
+
+  // Import GSAP only once.
+  if (!gsapPromise) {
+    gsapPromise = import("https://esm.sh/gsap@3.13.0");
+  }
+
+  gsapPromise
+    .then(({ gsap }) => {
+      // Prevent overlapping animations.
+      gsap.killTweensOf(cards);
+
+      if (isInitialLoad) {
+        // More noticeable entrance animation on initial page load.
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 14 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.3,
+            stagger: 0.035,
+            ease: "power2.out",
+            overwrite: true
+          }
+        );
+      } else {
+        // Shorter transition when search results or filters change.
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 8 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.2,
+            stagger: 0.02,
+            ease: "power1.out",
+            overwrite: true
+          }
+        );
+      }
+    })
+    .catch((error) => {
+      console.warn("Directory animation unavailable:", error);
+    });
+}
+
+
 // Convert a Supabase record into the structure
 // already used by the website.
 function formatCoach(record) {
@@ -224,29 +288,15 @@ function render() {
 
   updateTray();
 
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
+   // Determine whether this is the first directory render.
+  const isInitialLoad = !hasRenderedDirectory;
 
-  if (results.length && !reduceMotion) {
-    import("https://esm.sh/gsap@3.13.0")
-      .then(({ gsap }) => {
-        gsap.fromTo(
-          ".directory-card",
-          { opacity: 0, y: 14 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: 0.035,
-            ease: "power2.out",
-            overwrite: true
-          }
-        );
-      })
-      .catch(() => {});
-  }
+  hasRenderedDirectory = true;
+
+  // Animate the newly displayed cards.
+  animateDirectoryCards(isInitialLoad);
 }
+
 
 function clearFilters() {
   $("#coach-filter-form").reset();
@@ -379,5 +429,6 @@ $("#empty-reset").addEventListener("click", clearFilters);
 
 // Start the directory by retrieving the database records.
 loadCoaches();
+
 
 

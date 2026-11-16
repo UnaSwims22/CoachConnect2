@@ -4,6 +4,102 @@ import { supabase } from "./supabase.js";
 const sessionsList = document.querySelector("#sessions-list");
 const sessionsStatus = document.querySelector("#sessions-status");
 
+
+// Cache the GSAP import so it only needs to load once.
+let gsapPromise;
+
+function loadGSAP() {
+  if (!gsapPromise) {
+    gsapPromise = import("https://esm.sh/gsap@3.13.0");
+  }
+
+  return gsapPromise;
+}
+
+// Animate the My Sessions page heading and section.
+async function animateSessionsPage() {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (reduceMotion) return;
+
+  try {
+    const { gsap } = await loadGSAP();
+
+    const timeline = gsap.timeline({
+      defaults: {
+        ease: "power2.out"
+      }
+    });
+
+    timeline
+      .fromTo(
+        ".my-sessions-page > .eyebrow",
+        { y: 15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.3 }
+      )
+      .fromTo(
+        ".my-sessions-page > h1",
+        { y: 25, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45 },
+        "-=0.1"
+      )
+      .fromTo(
+        ".my-sessions-page > .page-lead",
+        { y: 15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.3 },
+        "-=0.15"
+      )
+      .fromTo(
+        ".sessions-section-heading",
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4 },
+        "-=0.05"
+      );
+
+  } catch (error) {
+    console.info("My Sessions page animation unavailable.", error);
+  }
+}
+
+// Animate the session cards after they have loaded.
+async function animateSessionCards() {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (reduceMotion) return;
+
+  const cards = sessionsList.querySelectorAll(".session-card");
+
+  if (!cards.length) return;
+
+  try {
+    const { gsap } = await loadGSAP();
+
+    gsap.fromTo(
+      cards,
+      {
+        y: 18,
+        opacity: 0
+      },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.out",
+        overwrite: true
+      }
+    );
+
+  } catch (error) {
+    console.info("Session card animation unavailable.", error);
+  }
+}
+
+
 // Display a message on the page.
 function showStatus(message, isError = false) {
   sessionsStatus.hidden = false;
@@ -214,6 +310,8 @@ async function loadSessions() {
   requests.forEach((request) => {
     sessionsList.append(createSessionCard(request));
   });
+
+  animateSessionCards();
 }
 
 // Cancel a pending request in Supabase.
@@ -272,6 +370,8 @@ sessionsList.addEventListener("click", async (event) => {
 
   await cancelRequest(requestId, cancelButton);
 });
+
+animateSessionsPage();
 
 // Load requests when the page opens.
 loadSessions();

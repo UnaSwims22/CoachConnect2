@@ -149,6 +149,61 @@
             <a class="button button-dark" href="./find-coach.html">FIND A COACH <span aria-hidden="true"></span></a>
         </section>
 
+        <!-- Current weather and outdoor training conditions -->
+        <section class="weather-section content-width" aria-labelledby="weather-title">
+            <div class="weather-heading">
+                <p class="eyebrow"><span class="eyebrow-line eyebrow-line-dark"></span>LOCAL CONDITIONS</p>
+                <h2 id="weather-title">CHECK THE<br><span>CONDITIONS.</span></h2>
+                <p> A quick look at the weather before planning your next outdoor session.</p>
+            </div>
+
+            <div class="weather-panel" aria-live="polite" aria-atomic="true">
+                <div class="weather-location">
+                    <p class="eyebrow">CURRENT WEATHER</p>
+                    <h3>Johannesburg, South Africa</h3>
+                    <p id="weather-updated">Weather information is loading...</p>
+                </div>
+
+                <div id="weather-loading" class="weather-message"> Loading current weather...</div>
+
+                <div id="weather-error" class="weather-message notice-error" hidden> Weather information is currently unavailable.</div>
+
+                <div id="weather-content" class="weather-content" hidden>
+                   <div class="weather-main">
+                       <p id="weather-description">--</p>
+                       <p class="weather-temperature"><span id="weather-temperature">--</span><span>°C</span></p>
+                       <p>Feels like <span id="weather-feels-like">--</span>°C</p>
+                    </div>
+
+                    <div class="weather-details">
+                       <div>
+                           <span class="weather-detail-label">WIND SPEED</span>
+                           <strong id="weather-wind">-- km/h</strong>
+                        </div>
+
+                        <div>
+                           <span class="weather-detail-label">HUMIDITY</span>
+                           <strong id="weather-humidity">--%</strong>
+                        </div>
+
+                        <div>
+                            <span class="weather-detail-label">PRECIPITATION</span>
+                            <strong id="weather-rain">-- mm</strong>
+                        </div>
+                    </div>
+
+                    <p id="weather-advice" class="weather-advice"></p>
+                </div>
+
+                <p class="weather-credit">
+                    Weather data provided by
+                    <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">
+                        Open-Meteo
+                    </a>.
+                </p>
+            </div>
+        </section>
+
         <!--
         <section class="section-intro">
             <p class="eyebrow">A BETTER WAY TO CHOOSE</p>
