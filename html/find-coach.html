@@ -10,12 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/find-coaches.js"></script>
 </head>
 
 <body>
+
   <header class="site-header">
-    <a class="logo" href="/html/index.html">COACH<span>CONNECT</span></a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <a class="logo" href="/html/index.html" aria-label="CoachConnect home"><span class="logo-mark">C</span><span>COACH<span class="logo-accent">CONNECT</span></span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"><span class="menu-toggle-label">Menu</span><span class="menu-icon" aria-hidden="true"><span></span><span></span></span></button>
     <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
       <a href="/html/index.html">Home</a>
       <a href="/html/find-coach.html" aria-current="page">Find a coach</a>
@@ -23,14 +25,128 @@
     </nav>
   </header>
 
-  <main class="page-shell">
-    <p class="eyebrow">DISCOVER YOUR COACH</p>
-    <h1>Find a coach.</h1>
-    <p class="page-lead">Search by sport and location. Compare the details that matter to you.</p>
-    <div id="connection-status" class="notice" role="status">Coach listings will appear here </div>
+  <main id="main-content" class="find-page">
+    <section class="find-hero"> 
+      <div class="content-width find-hero-inner">
+          <p class="eyebrow"><span class="eyebrow-line"></span> YOUR SEARCH STARTS HERE</p>
+          <h1>FIND YOUR<br><span>COACH.</span></h1>
+          <p>Explore coaches, understand what they offer and compare the details that matter to your development.</p>
+      </div>
+      <span class="find-hero-index" aria-hidden="true">CC / DISCOVER / 01</span>
+    </section>
+
+    <section class="directory-section content-width" id="coach-results" aria-labelledby="directory-title">
+      <div class="directory-heading">
+        <div>
+          <p class="eyebrow eyebrow-dark"><span class="eyebrow-line eyebrow-line-dark"></span> THE COACH DIRECTORY</p>
+          <h2 id="directory-title">EXPLORE YOUR <br><span>OPTIONS.</span></h2>
+        </div>
+        <p class="directory-intro">Use search and filters to find coaches whose location, experience and approach suit what you're looking for</p>
+      </div>
+
+      <form class="filter-panel" id="coach-filter-form">
+        <div class="filter-search">
+          <label class="filter-label" for="coach-search">SEARCH COACHES</label>
+          <div class="search-input-wrap">
+            <span aria-hidden="true"></span>
+            <input id="coach-search" type="search" placeholder="Name, sport or location">
+          </div>
+        </div>
+        
+        <div class="filter-control">
+          <label class="filter-label" for="sport-filter">SPORT</label>
+          <select id="sport-filter">
+            <option value="">All sports</option>
+            <option>Basketball</option>
+            <option>Football</option>
+            <option>Tennis</option>
+            <option>Swimming</option>
+            <option>Athletics</option>
+          </select>
+        </div>
+
+        <div class="filter-control">
+          <label class="filter-label" for="level-filter">COACHING LEVEL</label>
+          <select id="level-filter">
+            <option value="">All levels</option>
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+
+        <div class="filter-control">
+          <label class="filter-label" for="session-filter">SESSION TYPE</label>
+          <select id="session-filter">
+            <option value="">Any session</option>
+            <option>Individual</option>
+            <option>Group</option>
+            <option>Online</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="button button-dark filter-submit" type="submit">Apply filters <span aria-hidden="true"></span></button>
+          <button class="reset-filters" type="reset">Clear all</button>
+        </div>
+      </form>
+
+      <div class="results-toolbar">
+        <p id="result-count" class="result-count" aria-live="polite">Loading coaches…</p>
+        <label class="sort-control" for="sort-coaches">
+          <span>SORT BY</span>
+          <select id="sort-coaches">
+            <option value="recommended">Recommended</option>
+            <option value="price-low">Price: low to high</option>
+            <option value="price-high">Price: high to low</option>
+            <option value="name">Name: A to Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="coach-grid" class="directory-grid" aria-live="polite" aria-busy="true"></div>
+      <div id="empty-state" class="empty-state" hidden>
+        <span class="empty-state-mark">?</span>
+        <h3>NO COACHES FOUND.</h3>
+        <p>Try changing your search or clearing one of your filters.</p>
+        <button class="button button-dark" id="empty-reset" type="button">Clear filters</button>
+      </div>
+
+      <aside class="compare-tray" id="compare-tray" aria-label="Coach comparison" hidden>
+        <div class="compare-tray-copy">
+          <span class="compare-tray-label">YOUR SHORTLIST</span>
+          <strong id="compare-count">0 coaches selected</strong>
+        </div>
+
+        <div class="compare-tray-names" id="compare-names"></div>
+      
+        <button class="button button-accent" id="compare-button" type="button" disabled>Compare coaches 
+          <span aria-hidden="true"></span>
+        </button>
+
+        <button class="compare-clear" id="compare-clear" type="button">Clear</button>
+      </aside>
+    </section>
+
+    <section class="compare-panel content-width" id="comparison-panel" hidden aria-labelledby="comparison-title">
+      <div class="comparison-heading">
+        <div>
+          <p class="eyebrow eyebrow-dark"><span class="eyebrow-line eyebrow-line-dark"></span> SIDE-BY-SIDE VIEW</p>
+          <h2 id="comparison-title">COMPARE YOUR<br><span>SHORTLIST.</span></h2>
+        </div>
+        <button class="comparison-close" id="close-comparison" type="button">Close comparison </button>
+      </div>
+
+      <div id="comparison-content" class="comparison-content"></div>
+      <p class="sample-note">All coach details and prices are illustrative sample content. Credentials have not been independently verified. </p>
+    </section>
   </main>
   
-  <footer class="site-footer"><span>© 2026 CoachConnect </span><span>Find your next step.</span></footer>
+  <footer class="site-footer">
+    <a href="/html/index.html">COACH <span>CONCEcT</span></a>
+    <p>Find your next step</p>
+    <p>© 2026 CoachConnect </p>
+  </footer>
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { supabase } from "./supabase.js";
 
 const menuButton = document.querySelector(".menu-toggle");
 const navigation = document.querySelector("#primary-nav");
@@ -7,7 +7,7 @@ if (menuButton && navigation) {
     menuButton.addEventListener("click", () => {
         const isOpen = menuButton.getAttribute("aria-expanded") === "true";
         menuButton.setAttribute("aria-expanded", String(isOpen));
-        navigation.classList.toggle("is-open, !isOpen");
+        navigation.classList.toggle("is-open", !isOpen);
     });
 
     // Close the mobile menu after a visitor chooses a page.
