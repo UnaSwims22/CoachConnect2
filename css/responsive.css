@@ -1,0 +1,606 @@
+/* =========================================
+   GLOBAL RESPONSIVE RULES
+========================================= */
+
+@media (max-width: 900px) {
+  .search-band { 
+    grid-template-columns: 1fr; 
+    gap: 24px; 
+  }
+
+  .search-note { grid-column: 1; }
+
+  .coach-grid { gap: 14px; }
+
+  .coach-card-body { padding-inline: 15px; }
+
+  .coach-card h3 { font-size: 1.75rem; }
+
+  .how-layout { gap: 48px; }
+}
+
+
+@media (max-width: 700px) {
+  :root { --page-gutter: 22px; }
+
+  .site-header { min-height: 72px; }
+
+  .menu-toggle { display: inline-flex; }
+
+  .primary-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px var(--page-gutter) 18px;
+    background: var(--color-ink);
+    border-top: 1px solid rgba(255,255,255,.15);
+  }
+
+  .primary-nav.is-open { 
+    display: flex; 
+    flex-direction: column; 
+  }
+
+  .primary-nav a { padding: 13px 0; }
+
+  .primary-nav .nav-cta { 
+    justify-content: space-between; 
+    margin-top: 8px; 
+    padding-inline: 14px; 
+  }
+
+  .hero { 
+    min-height: 680px; 
+    min-height: min(760px, calc(100svh - 72px)); 
+    align-items: end; 
+  }
+
+  .hero-image { background-position: 58% center; }
+
+  .hero-shade { 
+    background: linear-gradient(90deg, rgba(10,12,10,.88), rgba(10,12,10,.45)), linear-gradient(0deg, rgba(10,12,10,.65), transparent 75%); 
+  }
+
+  .hero-content { padding-block: 90px 115px; }
+
+  .hero-title { font-size: clamp(4.2rem, 17vw, 7.3rem); }
+
+  .hero-copy { 
+    max-width: 430px; 
+    font-size: .9rem;
+  }
+
+  .hero-index { bottom: 22px; }
+
+  .hero-location { 
+    right: 90px; 
+    bottom: 20px; 
+    max-width: 190px; 
+    font-size: .52rem; 
+    line-height: 1.5; 
+  }
+
+  .search-band { 
+    padding: 38px var(--page-gutter) 28px;
+    gap: 22px; 
+  }
+
+  .search-band-heading h2 { font-size: 3.2rem; }
+
+  .quick-search { 
+    display: grid; 
+    grid-template-columns: 1fr; 
+    gap: 8px; 
+    padding: 12px; 
+  }
+
+  .search-field { padding: 8px 8px 10px; }
+
+  .search-divider { 
+    width: 100%; 
+    height: 1px; 
+  }
+
+  .search-submit { width: 100%; }
+
+  .featured-section { 
+    padding-top: 76px; 
+    padding-bottom: 76px; 
+  }
+
+  .section-heading { 
+    align-items: start; 
+    flex-direction: column; 
+    gap: 18px; 
+    margin-bottom: 28px; 
+  }
+
+  .section-heading h2 { font-size: clamp(3.5rem, 14vw, 5.5rem); }
+
+  .coach-grid { 
+    grid-template-columns: 1fr; 
+    gap: 20px; 
+  }
+
+  .coach-image-link { height: 250px; }
+
+  .coach-card-body { padding: 20px; }
+
+  .coach-description { min-height: 0; }
+
+  .how-section { padding-block: 76px; }
+
+  .how-layout { 
+    grid-template-columns: 1fr; 
+    gap: 48px; 
+  }
+
+  .how-intro h2 { font-size: clamp(3.8rem, 15vw, 5.7rem); }
+
+  .step-item { 
+    grid-template-columns: 34px 1fr 18px; 
+    gap: 12px; 
+    padding: 22px 0; 
+  }
+
+  .step-item h3 { font-size: 1.65rem; }
+
+  .closing-cta { 
+    align-items: flex-start; 
+    flex-direction: column; 
+    padding-block: 75px; 
+  }
+
+  .closing-cta h2 { font-size: clamp(3.8rem, 15vw, 5.7rem); }
+
+  .site-footer { 
+    align-items: flex-start; 
+    flex-direction: column; 
+    gap: 8px; 
+    padding-block: 22px; 
+  }
+}
+
+
+@media (max-width: 380px) {
+  .hero-title { font-size: 3.85rem; }
+
+  .hero-actions { 
+    align-items: flex-start; 
+    flex-direction: column; 
+    gap: 18px; 
+  }
+
+  .coach-card-footer { 
+    align-items: flex-start; 
+    flex-direction: column; 
+  }
+}
+
+/* =========================================
+   FIND A COACH RESPONSIVE RULES
+========================================= */
+
+@media(max-width:1050px){
+  .filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .filter-search{grid-column:span 2}
+  .filter-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    grid-column:span 2
+  }
+  .directory-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+}
+
+@media(max-width:700px){
+  .find-hero-inner{padding-block:68px 76px}
+
+  .find-hero h1{font-size:clamp(5rem,20vw,7rem)}
+
+  .directory-section{padding-block:65px 70px}
+
+  .directory-heading{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:14px
+  }
+
+  .directory-heading h2{font-size:clamp(3.8rem,15vw,5.3rem)}
+    
+  .filter-panel{
+    grid-template-columns:1fr;
+    padding:15px
+  }
+
+  .filter-search,.filter-actions{grid-column:auto}
+    
+  .filter-actions{display:grid}
+
+  .results-toolbar{
+    align-items:flex-start;
+    flex-direction:column;gap:12px
+  }
+
+  .directory-grid{grid-template-columns:1fr;gap:17px}
+
+  .directory-card-image{height:245px}
+
+  .directory-bio{min-height:0}
+
+  .compare-tray{
+    bottom:8px;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:13px
+  }
+
+  .compare-tray-copy{flex:1}
+
+  .compare-tray-names{
+    order:3;
+    flex-basis:100%
+  }
+
+  .compare-tray .button{flex:1}
+
+  .comparison-heading{
+    align-items:flex-start;
+    flex-direction:column
+  }
+
+  .comparison-table th,
+  .comparison-table td{
+    min-width:135px;
+    padding:12px
+  }
+
+}
+
+/* FIND A COACH REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  .directory-card-image img{
+    transition:none
+  }
+}
+
+/* =========================================
+   COACH PROFILE RESPONSIVE RULES
+========================================= */
+
+@media(max-width:900px){
+  .profile-hero{
+    grid-template-columns:1fr  .85fr;
+    gap:30px
+  }
+  .profile-portrait,.profile-portrait img{min-height:400px}
+
+  .profile-facts{grid-template-columns:repeat(2,1fr)}
+  
+  .profile-details{
+    grid-template-columns:1fr  .8fr;
+    gap:35px
+  }
+  .profile-info-card{padding:22px}
+}
+
+@media(max-width:700px){
+  .profile-page{padding-top:24px}
+
+  .profile-topline{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:18px;
+    margin-bottom:22px
+  }
+  .profile-hero{
+    grid-template-columns:1fr;
+    gap:28px;
+    padding-bottom:42px
+  }
+  .profile-hero-copy{padding:0}
+
+  .profile-hero h1{font-size:clamp(4.5rem,18vw,6.8rem)}
+
+  .profile-intro{font-size:.84rem}
+
+  .profile-hero-actions{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:17px
+  }
+  .profile-portrait,.profile-portrait img{
+    min-height:310px;
+    max-height:420px
+  }
+
+  .profile-facts{
+    gap:20px 12px;
+    padding-block:23px
+  }
+
+  .profile-facts>div{padding-left:12px}
+
+  .profile-facts strong{font-size:1.5rem}
+
+  .profile-details{
+    grid-template-columns:1fr;
+    gap:45px;
+    padding-block:65px
+  }
+  .profile-main-column{gap:52px}
+
+  .profile-section-block h2{font-size:clamp(3.5rem,14vw,5rem)}
+
+  .profile-info-card{
+    position:static;
+    padding:23px
+  }
+
+  .profile-demo-note .content-width{
+    grid-template-columns:1fr;
+    gap:8px
+  }
+}
+
+/* =========================================
+   SESSION REQUEST RESPONSIVE RULES
+========================================= */
+
+@media (max-width: 900px) {
+  .request-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 25px;
+  }
+
+  .request-coach-summary,
+  .session-request-form {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 750px) {
+  .session-request-page {
+    padding-top: 45px;
+    padding-bottom: 70px;
+  }
+
+  .session-request-heading {
+    margin-bottom: 35px;
+  }
+
+  .session-request-heading h1 {
+    font-size: clamp(4.5rem, 15vw, 6.5rem);
+  }
+
+  .request-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .request-coach-summary,
+  .session-request-form {
+    padding: 23px;
+  }
+
+  .session-request-form button[type="submit"] {
+    width: 100%;
+  }
+
+  .request-confirmation {
+    padding: 25px;
+  }
+}
+
+/* =========================================
+   MY SESSIONS RESPONSIVE RULES
+========================================= */
+
+@media (max-width: 900px) {
+
+  .page-shell.my-sessions-page {
+    padding-top: 70px;
+  }
+
+  .sessions-section {
+    margin-top: 65px;
+  }
+
+  .session-card {
+    padding: 25px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .page-shell.my-sessions-page {
+    padding-top: 48px;
+    padding-bottom: 75px;
+  }
+
+  .my-sessions-page > h1 {
+    font-size: clamp(4.5rem, 17vw, 6.5rem);
+  }
+
+  .page-lead {
+    font-size: .85rem;
+  }
+
+  .sessions-section {
+    margin-top: 60px;
+  }
+
+  .sessions-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 24px;
+  }
+
+  .sessions-section-heading h2 {
+    font-size: clamp(3.2rem, 13vw, 4.3rem);
+  }
+
+  .sessions-section-heading .button {
+    width: 100%;
+  }
+
+  .session-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 22px;
+  }
+
+  .session-card-details h3 {
+    font-size: 2rem;
+  }
+
+  .session-card-status {
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 17px;
+    border-top: 1px solid #D3CFC5;
+  }
+
+  .session-card-price {
+    font-size: 1.7rem;
+  }
+
+  .session-card-message {
+    grid-column: auto;
+  }
+
+}
+
+@media (max-width: 650px) {
+  .session-more-details {
+    grid-column: auto;
+  }
+
+  .button-cancel {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .session-card {
+    transition: none;
+  }
+}
+
+/* =========================================
+   AUTHENTICATION RESPONSIVE RULES
+========================================= */
+
+@media (max-width: 850px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    gap: 38px;
+    padding-top: 60px;
+    padding-bottom: 75px;
+  }
+
+  .auth-intro {
+    max-width: 650px;
+  }
+
+  .auth-card {
+    max-width: 560px;
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+  .auth-page {
+    gap: 30px;
+    padding-top: 45px;
+    padding-bottom: 65px;
+  }
+
+  .auth-intro h1 {
+    font-size: clamp(4rem, 16vw, 5.5rem);
+  }
+
+  .auth-card {
+    padding: 23px;
+  }
+
+  .auth-form {
+    gap: 20px;
+  }
+}
+
+/* =========================================
+   WEATHER RESPONSIVE RULES
+========================================= */
+
+@media (max-width: 900px) {
+    .weather-section {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-block: 75px;
+    }
+
+    .weather-heading > p:last-child {
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 550px) {
+    .weather-section {
+        padding-block: 60px;
+    }
+
+    .weather-panel {
+        padding: 23px;
+    }
+
+    .weather-details {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .weather-details > div {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+    }
+
+    .weather-location h3 {
+        font-size: 1.8rem;
+    }
+}
+
+
+/* Respect the visitor's device-level motion preference. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, 
+  *::before, 
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .weather-section * {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
+
+
+
+
+
