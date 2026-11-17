@@ -137,7 +137,7 @@ const weatherUpdated = document.querySelector("#weather-updated");
 const weatherAdvice = document.querySelector("#weather-advice");
 
 // Convert Open-Meteo weather codes into readable descriptions.
-function getWeatherDescription(code) {
+export function getWeatherDescription(code) {
     const weatherConditions = {
         0: "Clear sky",
         1: "Mainly clear",
@@ -166,7 +166,7 @@ function getWeatherDescription(code) {
 }
 
 // Give a simple general outdoor-training note.
-function getTrainingAdvice(weather) {
+export function getTrainingAdvice(weather) {
     
     if ([95, 96, 99].includes(weather.weather_code)) {
         return "Thunderstorm conditions are reported. Postpone outdoor training until conditions are safe.";

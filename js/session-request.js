@@ -1,4 +1,8 @@
 import { supabase } from "./supabase.js";
+import {
+  getWeatherDescription,
+  getTrainingAdvice
+} from "./main.js";
 
 // Get the page elements.
 const form = document.querySelector("#session-request-form");
@@ -12,7 +16,25 @@ const coachPrice = document.querySelector("#request-coach-price");
 const sessionType = document.querySelector("#session-type");
 
 const dateInput = document.querySelector("#session-date");
+const locationInput = document.querySelector("#session-location");
 const submitButton = form.querySelector('button[type="submit"]');
+
+//Weather forecast elements.
+const weatherStatus = document.querySelector("#training-weather-status");
+const weatherResult = document.querySelector("#training-weather-result");
+
+const weatherLocation = document.querySelector("#training-weather-location");
+const weatherDate = document.querySelector("#training-weather-date");
+
+const weatherTemperature = document.querySelector("#training-weather-temperature");
+const weatherMinimum = document.querySelector("#training-weather-min");
+const weatherMaximum = document.querySelector("#training-weather-max");
+
+const weatherDescription = document.querySelector("#training-weather-description");
+const weatherRainChance = document.querySelector("#training-weather-rain-chance");
+const weatherRain = document.querySelector("#training-weather-rain");
+const weatherWind = document.querySelector("#training-weather-wind");
+const weatherAdvice = document.querySelector("#training-weather-advice");
 
 // Read the selected coach's prototype ID from the URL.
 const params = new URLSearchParams(window.location.search);
@@ -169,6 +191,264 @@ function showStatus(message, isError = false) {
   statusMessage.classList.toggle("notice-error", isError);
 }
 
+// ------------------------------------------
+// TRAINING-DAY WEATHER FORECAST
+// ------------------------------------------
+
+// Keep track of requests so an older API response
+// cannot overwrite a newer location or date.
+let weatherRequestNumber = 0;
+
+let weatherInputTimeout;
+
+// Display weather status messages.
+function showWeatherStatus(message, isError = false) {
+  weatherStatus.textContent = message;
+  weatherStatus.classList.toggle("notice-error", isError);
+  weatherResult.hidden = true;
+}
+
+// Convert a date into a readable format.
+function formatTrainingDate(date) {
+  return new Date(`${date}T12:00:00`).toLocaleDateString("en-ZA", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+}
+
+// Check how many days ahead the selected date is.
+function getDaysFromToday(selectedDate) {
+  const selected = new Date(`${selectedDate}T00:00:00`);
+  const todayDate = new Date(`${localToday}T00:00:00`);
+
+  return Math.round(
+    (selected.getTime() - todayDate.getTime()) / 86400000
+  );
+}
+
+// Find the coordinates of the athlete's chosen location.
+async function findTrainingLocation(location) {
+  const geocodingURL = new URL(
+    "https://geocoding-api.open-meteo.com/v1/search"
+  );
+
+  geocodingURL.search = new URLSearchParams({
+    name: location,
+    count: "5",
+    language: "en",
+    format: "json"
+  });
+
+  const response = await fetch(geocodingURL);
+
+  if (!response.ok) {
+    throw new Error("Could not search for this training location.");
+  }
+
+  const data = await response.json();
+
+  if (!data.results || data.results.length === 0) {
+    throw new Error(
+      "We couldn't find that location. Try entering a suburb and city."
+    );
+  }
+
+  // Use the first matching result returned by Open-Meteo.
+  const place = data.results[0];
+
+  return {
+    latitude: place.latitude,
+    longitude: place.longitude,
+    name: [
+      place.name,
+      place.admin1,
+      place.country
+    ].filter(Boolean).filter((value, index, array) =>
+      array.indexOf(value) === index
+    ).join(", ")
+  };
+}
+
+// Request the weather forecast for one selected date.
+async function getTrainingWeather(latitude, longitude, date) {
+  const forecastURL = new URL(
+    "https://api.open-meteo.com/v1/forecast"
+  );
+
+  forecastURL.search = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+
+    daily: [
+      "weather_code",
+      "temperature_2m_max",
+      "temperature_2m_min",
+      "precipitation_probability_max",
+      "precipitation_sum",
+      "wind_speed_10m_max"
+    ].join(","),
+
+    start_date: date,
+    end_date: date,
+
+    timezone: "auto",
+    temperature_unit: "celsius",
+    wind_speed_unit: "kmh",
+    precipitation_unit: "mm",
+    //forecast_days: "16"
+  });
+
+  console.log("Weather API request:", forecastURL.toString());
+
+  const response = await fetch(forecastURL);
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    console.error("Open-Meteo API response:", errorData);
+
+    throw new Error(
+      errorData?.reason ||
+      `Weather API request failed. Status: ${response.status}`
+    );
+  }
+
+  const data = await response.json();
+
+  console.log("Weather API data:", data);
+
+
+  if (!data.daily || !data.daily.time?.length) {
+    throw new Error("No forecast data was returned for this date.");
+  }
+
+  return data.daily;
+}
+
+// Load and display the selected training day's forecast.
+async function loadTrainingWeather() {
+  const requestNumber = ++weatherRequestNumber;
+  const selectedDate = dateInput.value;
+  const selectedLocation = locationInput.value.trim();
+
+  // Both fields are needed before we can search for weather.
+  if (!selectedDate || !selectedLocation) {
+    showWeatherStatus(
+      "Select a training date and enter a location to check the forecast."
+    );
+    return;
+  }
+
+  // Do not request a forecast for a past date.
+  if (selectedDate < localToday) {
+    showWeatherStatus(
+      "Choose today or a future date to check the forecast.",
+      true
+    );
+    return;
+  }
+
+  // Open-Meteo supports forecasts up to 16 days ahead.
+  if (getDaysFromToday(selectedDate) > 15) {
+    showWeatherStatus(
+      "A forecast is not available this far ahead yet. Please check again when your training date is within the next 16 days."
+    );
+    return;
+  }
+
+
+
+  showWeatherStatus("Finding your training location and checking the forecast...");
+
+  try {
+    // Step 1: Find the selected location's coordinates.
+    const place = await findTrainingLocation(selectedLocation);
+
+    // Ignore this response if a newer request has started.
+    if (requestNumber !== weatherRequestNumber) return;
+
+    // Step 2: Request weather for the selected date.
+    const dailyWeather = await getTrainingWeather(
+      place.latitude,
+      place.longitude,
+      selectedDate
+    );
+
+    // Ignore outdated responses.
+    if (requestNumber !== weatherRequestNumber) return;
+
+    const weather = {
+      weather_code: dailyWeather.weather_code[0],
+      temperature_2m_min: dailyWeather.temperature_2m_min[0],
+      temperature_2m_max: dailyWeather.temperature_2m_max[0],
+      precipitation_probability_max:
+        dailyWeather.precipitation_probability_max[0],
+      precipitation: dailyWeather.precipitation_sum[0],
+      wind_speed_10m: dailyWeather.wind_speed_10m_max[0]
+    };
+
+    // Step 3: Display the forecast.
+    weatherLocation.textContent = place.name;
+
+    weatherDate.textContent =
+      formatTrainingDate(selectedDate);
+
+    weatherTemperature.textContent =
+      Math.round(
+        (weather.temperature_2m_min + weather.temperature_2m_max) / 2
+      );
+
+    weatherMinimum.textContent =
+      `${Math.round(weather.temperature_2m_min)}°C`;
+
+    weatherMaximum.textContent =
+      `${Math.round(weather.temperature_2m_max)}°C`;
+
+    weatherDescription.textContent =
+      getWeatherDescription(weather.weather_code);
+
+    weatherRainChance.textContent =
+      weather.precipitation_probability_max == null
+        ? "Unavailable"
+        : `${weather.precipitation_probability_max}%`;
+
+    weatherRain.textContent =
+      weather.precipitation == null
+        ? "Unavailable"
+        : `${weather.precipitation} mm`;
+
+    weatherWind.textContent =
+      weather.wind_speed_10m == null
+        ? "Unavailable"
+        : `${Math.round(weather.wind_speed_10m)} km/h`;
+
+    // Reuse the existing training advice from main.js.
+    weatherAdvice.textContent = getTrainingAdvice(weather);
+
+    // Show the successful result.
+    weatherStatus.textContent =
+      "Forecast successfully retrieved for your selected training date.";
+
+    weatherStatus.classList.remove("notice-error");
+    weatherResult.hidden = false;
+
+  } catch (error) {
+    // Do not show errors from outdated requests.
+    if (requestNumber !== weatherRequestNumber) return;
+
+    console.error("Training weather error:", error);
+
+    showWeatherStatus(
+      error.message || "Weather information is currently unavailable.",
+      true
+    );
+  }
+}
+
+
+
 // Show a sign-in link when the athlete is not authenticated.
 function showLoginMessage() {
   statusMessage.hidden = false;
@@ -261,6 +541,11 @@ async function loadCoach() {
   });
 
   restorePendingBooking();
+
+  // Refresh the forecast if a previous booking was restored.
+  if (dateInput.value && locationInput.value.trim()) {
+    loadTrainingWeather();
+  }
 
   animateRequestPage();
 }
@@ -399,6 +684,21 @@ form.addEventListener("submit", async (event) => {
     submitButton.disabled = false;
     submitButton.textContent = "Submit Request";
   }
+});
+
+// Update the forecast when the training date changes.
+dateInput.addEventListener("change", loadTrainingWeather);
+
+// Update the forecast when the location field loses focus.
+locationInput.addEventListener("change", loadTrainingWeather);
+
+// Wait until the athlete pauses typing before searching.
+locationInput.addEventListener("input", () => {
+  clearTimeout(weatherInputTimeout);
+
+  weatherInputTimeout = setTimeout(() => {
+    loadTrainingWeather();
+  }, 700);
 });
 
 // Load the selected coach when the page opens.

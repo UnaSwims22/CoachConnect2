@@ -600,7 +600,127 @@
   }
 }
 
+@media (max-width: 600px) {
+  .training-weather {
+    padding: 18px;
+  }
 
+  .training-weather-main {
+    align-items: flex-start;
+  }
+
+  .weather-temperature #training-weather-temperature {
+    font-size: 2.4rem;
+  }
+
+  .training-weather-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================
+   SESSION REQUEST — RESPONSIVE LAYOUT
+========================================= */
+
+/* Tablet and smaller desktop screens */
+@media (max-width: 1000px) {
+
+  .request-hero {
+    grid-template-columns: 1fr .85fr;
+    gap: 30px;
+  }
+
+  .session-request-heading h1 {
+    font-size: clamp(4.5rem, 8vw, 6.5rem);
+  }
+
+  .session-request-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .training-weather-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+/* Mobile and smaller tablets */
+@media (max-width: 750px) {
+
+  .session-request-page {
+    padding-top: 45px;
+    padding-bottom: 75px;
+  }
+
+  .request-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .session-request-heading h1 {
+    font-size: clamp(4.5rem, 15vw, 6.5rem);
+  }
+
+  .session-request-heading > p:last-child {
+    font-size: .88rem;
+  }
+
+  .request-coach-summary {
+    padding: 26px;
+  }
+
+  .session-request-form {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 23px;
+  }
+
+  .session-request-form .form-heading,
+  .session-request-form .training-weather,
+  .session-request-form .request-message-field,
+  .session-request-form .request-disclaimer,
+  .request-form-actions {
+    grid-column: 1;
+  }
+
+  .training-weather-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .request-form-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .request-form-actions .button {
+    width: 100%;
+  }
+
+}
+
+/* Very small screens */
+@media (max-width: 450px) {
+
+  .session-request-heading h1 {
+    font-size: clamp(3.8rem, 16vw, 5rem);
+  }
+
+  .request-coach-summary h2 {
+    font-size: 2.7rem;
+  }
+
+  .training-weather-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .request-form-actions .button {
+    min-width: 0;
+  }
+
+}
 
 
 
