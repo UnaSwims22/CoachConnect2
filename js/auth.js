@@ -13,6 +13,53 @@ const accountPanel = document.querySelector("#account-panel");
 const accountName = document.querySelector("#account-name");
 const logoutButton = document.querySelector("#logout-button");
 
+const PENDING_BOOKING_KEY = "coachconnectPendingBooking";
+const BOOKING_EXPIRY = 24 * 60 * 60 * 1000;
+
+let redirectingToBooking = false;
+
+function getPendingBooking() {
+  const saved = localStorage.getItem(PENDING_BOOKING_KEY);
+
+  if (!saved) return null;
+
+  try {
+    const booking = JSON.parse(saved);
+
+    if (
+      !booking.savedAt ||
+      Date.now() - booking.savedAt > BOOKING_EXPIRY ||
+      !Number.isInteger(Number(booking.coachId)) ||
+      Number(booking.coachId) <= 0
+    ) {
+      localStorage.removeItem(PENDING_BOOKING_KEY);
+      return null;
+    }
+
+    return booking;
+
+  } catch (error) {
+    localStorage.removeItem(PENDING_BOOKING_KEY);
+    return null;
+  }
+}
+
+// Return the user to the booking they were completing.
+function resumePendingBooking() {
+  if (redirectingToBooking) return;
+
+  const booking = getPendingBooking();
+
+  if (!booking) return;
+
+  redirectingToBooking = true;
+
+  const requestUrl =
+    `./session-request.html?coach=${encodeURIComponent(booking.coachId)}&resumeBooking=1`;
+
+  window.location.replace(requestUrl);
+}
+
 // Display messages to the user.
 function showMessage(message, isError = false) {
   authMessage.hidden = false;
@@ -76,6 +123,11 @@ async function checkUser() {
   }
 
   if (data.user) {
+    if (getPendingBooking()) {
+      resumePendingBooking();
+      return;
+    }
+
     showAccount(data.user);
   }
 }
@@ -107,7 +159,11 @@ registerForm.addEventListener("submit", async (event) => {
     options: {
       data: {
         full_name: fullName
-      }
+      },
+
+      // Return the user to CoachConnect after email confirmation.
+      emailRedirectTo:
+        `${window.location.origin}/html/auth.html?resumeBooking=1`
     }
   });
 
@@ -120,7 +176,13 @@ registerForm.addEventListener("submit", async (event) => {
   }
 
   if (data.session && data.user) {
+    if (getPendingBooking()) {
+      resumePendingBooking();
+      return;
+    }
+
     showAccount(data.user);
+
   } else {
     showMessage(
       "Your account has been created. Please check your email to confirm your account before logging in."
@@ -158,6 +220,11 @@ loginForm.addEventListener("submit", async (event) => {
     return;
   }
 
+  if (getPendingBooking()) {
+    resumePendingBooking();
+    return;
+  }
+
   showAccount(data.user);
 });
 
@@ -185,8 +252,12 @@ logoutButton.addEventListener("click", async () => {
 
 // Respond to authentication changes.
 supabase.auth.onAuthStateChange((event, session) => {
-  if (session?.user) {
-    showAccount(session.user);
+   if (event === "SIGNED_IN" && session?.user) {
+    if (getPendingBooking()) {
+      resumePendingBooking();
+    } else {
+      showAccount(session.user);
+    }
   }
 });
 

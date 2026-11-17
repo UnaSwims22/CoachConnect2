@@ -20,7 +20,69 @@ const coachId = Number(params.get("coach"));
 
 let coach = null;
 
+const PENDING_BOOKING_KEY = "coachconnectPendingBooking";
+const BOOKING_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
 
+function savePendingBooking(details) {
+  const pendingBooking = {
+    ...details,
+    savedAt: Date.now()
+  };
+
+  localStorage.setItem(
+    PENDING_BOOKING_KEY,
+    JSON.stringify(pendingBooking)
+  );
+}
+
+function getPendingBooking() {
+  const saved = localStorage.getItem(PENDING_BOOKING_KEY);
+
+  if (!saved) return null;
+
+  try {
+    const booking = JSON.parse(saved);
+
+    // Remove incomplete or expired booking information.
+    if (
+      !booking.savedAt ||
+      Date.now() - booking.savedAt > BOOKING_EXPIRY
+    ) {
+      localStorage.removeItem(PENDING_BOOKING_KEY);
+      return null;
+    }
+
+    return booking;
+  } catch (error) {
+    localStorage.removeItem(PENDING_BOOKING_KEY);
+    return null;
+  }
+}
+
+function restorePendingBooking() {
+  const booking = getPendingBooking();
+
+  // Only restore information for the coach originally selected.
+  if (!booking || Number(booking.coachId) !== coach.prototypeId) {
+    return;
+  }
+
+  sessionType.value = booking.sessionType || "";
+  dateInput.value = booking.date || "";
+
+  form.querySelector('[name="time"]').value =
+    booking.time || "";
+
+  form.querySelector('[name="location"]').value =
+    booking.location || "";
+
+  form.querySelector('[name="message"]').value =
+    booking.message || "";
+
+  showStatus(
+    "Your previous session request has been restored. Review your details and submit when you're ready."
+  );
+}
 
 let gsapPromise;
 
@@ -198,7 +260,7 @@ async function loadCoach() {
     sessionType.append(option);
   });
 
-  statusMessage.hidden = true;
+  restorePendingBooking();
 
   animateRequestPage();
 }
@@ -212,18 +274,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  // Check that an athlete is signed in.
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    showLoginMessage();
-    return;
-  }
-
-  // Collect the form information.
+  // Collect the booking details before checking authentication.
   const formData = new FormData(form);
 
   const selectedDate = formData.get("date");
@@ -238,7 +289,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  // Validate the other required fields.
+  // Validate all required fields.
   if (
     !selectedTime ||
     !selectedSessionType ||
@@ -247,6 +298,41 @@ form.addEventListener("submit", async (event) => {
     showStatus("Please complete all required fields.", true);
     return;
   }
+
+  // Ensure the selected session type belongs to this coach.
+  if (!coach.sessions.includes(selectedSessionType)) {
+    showStatus("Please select a valid session type.", true);
+    return;
+  }
+
+ 
+  // Check whether an athlete is signed in.
+  const { data: { session }, error: sessionError } =
+  await supabase.auth.getSession();
+
+  if (sessionError) {
+    console.error("Could not check authentication:", sessionError.message);
+    showStatus("We couldn't verify your account. Please try again.", true);
+    return;
+  }
+
+  // If there is no active session, save the booking and redirect.
+  if (!session) {
+    savePendingBooking({
+    coachId: coach.prototypeId,
+    sessionType: selectedSessionType,
+    date: selectedDate,
+    time: selectedTime,
+    location: preferredLocation,
+    message: message
+  });
+
+  window.location.href = "./auth.html?resumeBooking=1";
+  return;
+  }
+
+  const user = session.user;
+
 
   // Prevent repeated submissions while the request is being saved.
   submitButton.disabled = true;
@@ -273,6 +359,8 @@ form.addEventListener("submit", async (event) => {
       throw error;
     }
 
+    localStorage.removeItem(PENDING_BOOKING_KEY);
+
     // Display the confirmation screen.
     statusMessage.hidden = true;
     requestContent.hidden = true;
@@ -294,7 +382,7 @@ form.addEventListener("submit", async (event) => {
           });
         })
         .catch(() => {
-          // Confirmation remains usable if GSAP is unavailable.
+         
         });
     }
 

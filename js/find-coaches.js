@@ -19,6 +19,32 @@ const comparisonContent = $("#comparison-content");
 // This array will be populated using Supabase.
 let coaches = [];
 
+const homepageParams = new URLSearchParams(window.location.search);
+
+const normalize = (value) =>
+  String(value || "").trim().toLowerCase();
+
+let homepageLocation = homepageParams.get("location")?.trim() || "";
+
+const requestedSport = homepageParams.get("sport");
+
+if (requestedSport) {
+  const matchingSportOption = [...sport.options].find(
+    (option) =>
+      normalize(option.value) === normalize(requestedSport) ||
+      normalize(option.textContent) === normalize(requestedSport)
+  );
+
+  if (matchingSportOption) {
+    sport.value = matchingSportOption.value;
+  }
+}
+
+
+if (homepageLocation) {
+  search.value = homepageLocation;
+}
+
 // Track whether the directory has rendered for the first time.
 let hasRenderedDirectory = false;
 
@@ -155,7 +181,8 @@ async function loadCoaches() {
 }
 
 function filteredCoaches() {
-  const term = search.value.trim().toLowerCase();
+  const term = normalize(search.value);
+  
 
   let list = coaches.filter((coach) => {
     const text = [
@@ -166,12 +193,34 @@ function filteredCoaches() {
       coach.bio
     ].join(" ").toLowerCase();
 
+    const matchesSearch =
+      !term || text.includes(term);
+
+    const matchesHomepageLocation =
+      !homepageLocation ||
+      normalize(coach.location).includes(normalize(homepageLocation));
+
+    const matchesSport =
+      !sport.value ||
+      normalize(coach.sport) === normalize(sport.value);
+
+    const matchesLevel =
+      !level.value ||
+      normalize(coach.level) === normalize(level.value);
+
+    const matchesSession =
+      !session.value ||
+      coach.sessions.some(
+        (item) => normalize(item) === normalize(session.value)
+      );
+
     return (
-      (!term || text.includes(term)) &&
-      (!sport.value || coach.sport === sport.value) &&
-      (!level.value || coach.level === level.value) &&
-      (!session.value || coach.sessions.includes(session.value))
-    );
+      matchesSearch &&
+      matchesHomepageLocation &&
+      matchesSport &&
+      matchesLevel &&
+      matchesSession
+    );  
   });
 
   if (sort.value === "price-low") {
@@ -299,6 +348,7 @@ function render() {
 
 
 function clearFilters() {
+  homepageLocation ="";
   $("#coach-filter-form").reset();
   comparisonPanel.hidden = true;
   render();
@@ -311,7 +361,17 @@ $("#coach-filter-form").addEventListener("submit", (event) => {
 });
 
 $("#coach-filter-form").addEventListener("reset", () => {
+  homepageLocation = "";
+  
+  const currentUrl = new URL(window.location.href);
+
+  currentUrl.searchParams.delete("sport");
+  currentUrl.searchParams.delete("location");
+
+  window.history.replaceState({}, "", currentUrl);
+
   setTimeout(render, 0);
+
 });
 
 let searchTimer;
