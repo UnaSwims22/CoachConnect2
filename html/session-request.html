@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request a Session | CoachConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/components.css">
     <link rel="stylesheet" href="/css/pages.css">
@@ -29,33 +32,45 @@
       <a href="/html/index.html" aria-current="page" >Home</a>
       <a href="/html/find-coach.html">Find a coach</a>
       <a href="/html/my-sessions.html">My sessions</a>
+      <a href="/html/auth.html">Account</a> 
     </nav>
   </header>
 
-  <main class="content-width session-request-page">
-
-   <p id="request-status" class="request-status" role="status" hidden></p>
+  <main id="main-content" class="session-request-page">
 
     <section id="request-content" class="request-content">
-      <div class="request-hero">
-        <section class="session-request-heading">
-          <p class="eyebrow">COACHCONNECT / SESSION REQUEST</p>
-          <h1>Request a session</h1>
-          <p>
-            Tell the coach when and how you would prefer to train.
-            Your request will be sent as pending until it is reviewed.
-          </p>
-        </section>
 
-        <div class="request-coach-summary">
-          <p class="eyebrow">YOUR SELECTED COACH</p>
-          <h2 id="request-coach-name">Loading coach...</h2>
-          <p id="request-coach-details"></p>
-          <div class="request-coach-divider"></div>
-          <p id="request-coach-price"></p>
+      <section class="request-hero">
+        <div class="session-request-heading">
+          <p class="eyebrow">
+            <span class="eyebrow-line"></span>
+            COACHCONNECT / SESSION REQUEST
+          </p>
+          <h1>REQUEST YOUR <br><span>SESSION</span></h1>
+          <p>
+            Plan your next training session. Choose a date, time and location,
+            then send your request directly to your selected coach.
+          </p>
         </div>
-          
-      </div>
+      </section>
+
+      <p id="request-status" class="request-status" role="status" hidden></p>
+
+      <section class="request-coach-section" aria-label="Selected Coach"> 
+        <div class="request-coach-summary">
+          <div class="request-coach-information">
+            <p class="eyebrow">YOUR SELECTED COACH</p>
+            <h2 id="request-coach-name">Loading coach...</h2>
+            <p id="request-coach-details"></p>
+          </div>
+
+          <div class="request-coach-pricing">
+            <p id="request-coach-price"></p>
+          </div>
+
+        </div>
+
+      </section>
 
       <section class="request-layout">
 
@@ -95,71 +110,81 @@
 
           <section class="training-weather" aria-labelledby="training-weather-heading"> 
 
-            <div class="training-weather-heading">
-              <p class="eyebrow">WEATHER CHECK</p>
-              <h3 id="training-weather-heading">Weather for your session</h3>
+            <div class="weather-heading">
+              <p class="eyebrow">
+                <span class="eyebrow-line-dark"></span>
+                PLAN AHEAD
+              </p>
+              <h3 id="training-weather-heading">CHECK THE <br><span>CONDITIONS</span></h3>
               <p>
-                Check the expected weather conditions for your selected training date and location.
+                See what the weather is expected to be like at your chosen
+                training location before your session.
               </p>
             </div>
-
-            <p id="training-weather-status" class="weather-status" role="status" aria-live="polite">Select a training date and enter a location to check the forecast. </p>
-           
-            <div id="training-weather-result" class="training-weather-result" hidden>
-
-              <div class="training-weather-main">
-                <div>
-                  <p class="weather-location-label">FORECAST LOCATION</p>
-                  <h4 id="training-weather-location">Location</h4>
-                  <p id="training-weather-date"></p>
-                </div>
-
-                <div class="weather-temperature">
-                  <span id="training-weather-temperature">--</span>
-                  <span>°C</span>
-                </div>
+            
+            <div class="weather-panel" aria-live="polite" aria-atomic="true">
+              
+              <div class="weather-location">
+                <p class="eyebrow">SESSION FORECAST</p>
+                <h3 id="training-weather-location">Your training location</h3>
+                <p id="training-weather-date">Select a date to begin</p>
               </div>
 
-              <h4 id="training-weather-description">Weather conditions</h4>
+              <p id="training-weather-status" class="weather-message" role="status" >
+                Select a training date and enter a location to check the forecast. 
+              </p>
 
-              <div class="training-weather-stats">
-                <div class="weather-stat">
-                  <span>Minimum temperature</span>
-                  <strong id="training-weather-min">--</strong>
+              <div id="training-weather-result" class="weather-content" hidden>
+                <div class="weather-main">
+                  <p id="training-weather-description">Weather conditions</p>
+                  <p class="weather-temperature">
+                    <span id="training-weather-temperature">--</span>
+                    <span>°C</span>
+                  </p>
+                  <p>Average forecast temperature</p>
                 </div>
 
-                <div class="weather-stat">
-                  <span>Maximum temperature</span>
-                  <strong id="training-weather-max">--</strong>
+                <div class="weather-details">
+                  <div>
+                    <span class="weather-detail-label">MINIMUM TEMP.</span>
+                    <strong id="training-weather-min">--</strong>
+                  </div>
+
+                  <div>
+                    <span class="weather-detail-label">MAXIMUM TEMP.</span>
+                    <strong id="training-weather-max">--</strong>
+                  </div>
+
+                  <div>
+                    <span class="weather-detail-label">RAIN CHANCE</span>
+                    <strong id="training-weather-rain-chance">--</strong>
+                  </div>
+
+                  <div>
+                    <span class="weather-detail-label">RAINFALL</span>
+                    <strong id="training-weather-rain">--</strong>
+                  </div>
+
+                  <div>
+                    <span class="weather-detail-label">MAX. WIND</span>
+                    <strong id="training-weather-wind">--</strong>
+                  </div>
+
                 </div>
 
-                <div class="weather-stat">
-                  <span>Rain probability</span>
-                  <strong id="training-weather-rain-chance">--</strong>
-                </div>
-
-                <div class="weather-stat">
-                  <span>Expected rainfall</span>
-                  <strong id="training-weather-rain">--</strong>
-                </div>
-
-                <div class="weather-stat">
-                  <span>Maximum wind speed</span>
-                  <strong id="training-weather-wind">--</strong>
-                </div>
+                <p id="training-weather-advice" class="weather-advice"></p>
 
               </div>
 
-              <div class="weather-training-advice">
-                <h4>Outdoor training advice</h4>
-                <p id="training-weather-advice"></p>
-              </div>
+              <p class="weather-credit">
+                Weather data provided by
+                <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">
+                  Open-Meteo
+                </a>.
+              </p>
 
             </div>
 
-            <p class="weather-attribution">
-              Weather data provided by Open-Meteo.
-            </p>
           </section>
 
           <div class="form-field request-message-field">
@@ -186,9 +211,9 @@
               SUBMIT SESSION REQUEST
             </button>
           </div>
-
         </form>
       </section>
+
     </section>
 
     <section id="request-confirmation" class="request-confirmation" hidden>

@@ -4,6 +4,10 @@ import { supabase } from "./supabase.js";
 const sessionsList = document.querySelector("#sessions-list");
 const sessionsStatus = document.querySelector("#sessions-status");
 
+if (!sessionsList || !sessionsStatus) {
+  console.error("My Sessions page elements could not be found.");
+}
+
 
 // Cache the GSAP import so it only needs to load once.
 let gsapPromise;
@@ -24,6 +28,33 @@ async function animateSessionsPage() {
 
   if (reduceMotion) return;
 
+  const hero = document.querySelector(".sessions-hero");
+
+  if (!hero) return;
+
+  const eyebrow = hero.querySelector(".sessions-hero-eyebrow");
+  const heading = hero.querySelector(".sessions-hero-title");
+  const description = hero.querySelector(".sessions-hero-copy");
+  const actions = hero.querySelector(".sessions-hero-actions");
+  const heroIndex = hero.querySelector(".hero-index");
+  const heroLocation = hero.querySelector(".hero-location");
+
+  // Find the session section heading.
+  const sectionHeading = document.querySelector(
+    ".sessions-section-heading"
+  );
+
+  const heroElements = [
+    eyebrow,
+    heading,
+    description,
+    actions,
+    heroIndex,
+    heroLocation
+  ].filter(Boolean);
+
+
+
   try {
     const { gsap } = await loadGSAP();
 
@@ -33,34 +64,67 @@ async function animateSessionsPage() {
       }
     });
 
-    timeline
-      .fromTo(
-        ".my-sessions-page > .eyebrow",
+     if (eyebrow) {
+      timeline.fromTo(
+        eyebrow,
         { y: 15, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.3 }
-      )
-      .fromTo(
-        ".my-sessions-page > h1",
+      );
+    }
+
+    if (heading) {
+      timeline.fromTo(
+        heading,
         { y: 25, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.45 },
         "-=0.1"
-      )
-      .fromTo(
-        ".my-sessions-page > .page-lead",
+      );
+    }
+
+    if (description) {
+      timeline.fromTo(
+        description,
         { y: 15, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.3 },
         "-=0.15"
-      )
-      .fromTo(
-        ".sessions-section-heading",
-        { y: 18, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.4 },
-        "-=0.05"
       );
+    }
 
-  } catch (error) {
-    console.info("My Sessions page animation unavailable.", error);
+    if (actions) {
+      timeline.fromTo(
+        actions,
+        { y: 15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.3 },
+        "-=0.1"
+      );
+    }
+
+    const heroDetails = [heroIndex, heroLocation].filter(Boolean);
+
+    if (heroDetails.length) {
+      timeline.fromTo(
+        heroDetails,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.4 },
+        "-=0.1"
+      );
+    }
+
+     if (sectionHeading) {
+      timeline.fromTo(
+        sectionHeading,
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4 }
+      );
+    }
+
+    } catch (error) {
+    console.info(
+      "My Sessions page animation unavailable.",
+      error
+    );
   }
+
 }
 
 // Animate the session cards after they have loaded.

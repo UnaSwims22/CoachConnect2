@@ -157,9 +157,9 @@ async function animateRequestPage() {
 
       // Introduce the selected coach summary.
       .from(".request-coach-summary", {
-        y: 20,
+        y: 25,
         opacity: 0,
-        duration: 0.4
+        duration: 0.45
       }, "-=0.05")
 
       // Reveal the form fields in sequence.
@@ -359,7 +359,6 @@ async function loadTrainingWeather() {
   }
 
 
-
   showWeatherStatus("Finding your training location and checking the forecast...");
 
   try {
@@ -521,6 +520,11 @@ async function loadCoach() {
   coachName.textContent = coach.name;
   coachDetails.textContent = `${coach.sport} · ${coach.location}`;
   coachPrice.textContent = `Session price: R${coach.price}`;
+
+  // Hide the loading message after coach details load successfully.
+  statusMessage.hidden = true;
+  statusMessage.textContent = "";
+  statusMessage.classList.remove("notice-error");
 
   // Populate the session-type dropdown.
   sessionType.replaceChildren();

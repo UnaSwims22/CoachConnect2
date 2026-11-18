@@ -49,10 +49,10 @@ initialiseHomeAnimation();
 
 // Animate the Find a Coach page hero.
 async function initialiseFindHeroAnimation() {
-    const hero = document.querySelector(".find-hero");
+    const findHero = document.querySelector(".find-hero-index");
 
     // Only run this animation on the Find a Coach page.
-    if (!hero) return;
+    if (!findHero) return;
 
     // Respect the visitor's motion preferences.
     const reduceMotion = window.matchMedia(

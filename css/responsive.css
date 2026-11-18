@@ -199,69 +199,63 @@
   }
 }
 
-@media(max-width:700px){
-  .find-hero-inner{padding-block:68px 76px}
 
-  .find-hero h1{font-size:clamp(5rem,20vw,7rem)}
-
-  .directory-section{padding-block:65px 70px}
-
-  .directory-heading{
-    align-items:flex-start;
-    flex-direction:column;
-    gap:14px
+@media (max-width: 768px) {
+  .find-hero {
+    min-height: 620px;
   }
 
-  .directory-heading h2{font-size:clamp(3.8rem,15vw,5.3rem)}
-    
-  .filter-panel{
-    grid-template-columns:1fr;
-    padding:15px
+  .find-hero-inner {
+    padding-block: 75px 100px;
   }
 
-  .filter-search,.filter-actions{grid-column:auto}
-    
-  .filter-actions{display:grid}
-
-  .results-toolbar{
-    align-items:flex-start;
-    flex-direction:column;gap:12px
+  .find-hero .hero-title {
+    font-size: clamp(4.5rem, 12vw, 7rem);
   }
 
-  .directory-grid{grid-template-columns:1fr;gap:17px}
-
-  .directory-card-image{height:245px}
-
-  .directory-bio{min-height:0}
-
-  .compare-tray{
-    bottom:8px;
-    flex-wrap:wrap;
-    gap:10px;
-    padding:13px
+  .find-hero-image {
+    background-position: 58% center;
   }
 
-  .compare-tray-copy{flex:1}
-
-  .compare-tray-names{
-    order:3;
-    flex-basis:100%
+  .find-hero-shade {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(10,12,10,.92) 0%,
+        rgba(10,12,10,.72) 65%,
+        rgba(10,12,10,.4) 100%
+      ),
+      linear-gradient(
+        0deg,
+        rgba(10,12,10,.5),
+        transparent 50%
+      );
   }
-
-  .compare-tray .button{flex:1}
-
-  .comparison-heading{
-    align-items:flex-start;
-    flex-direction:column
-  }
-
-  .comparison-table th,
-  .comparison-table td{
-    min-width:135px;
-    padding:12px
-  }
-
 }
+
+@media (max-width: 480px) {
+  .find-hero {
+    min-height: 560px;
+  }
+
+  .find-hero-inner {
+    padding-block: 65px 90px;
+  }
+
+  .find-hero .hero-title {
+    font-size: clamp(4rem, 15vw, 5.5rem);
+  }
+
+  .find-hero .hero-copy {
+    max-width: 340px;
+    font-size: .88rem;
+  }
+
+  .find-hero .hero-index {
+    bottom: 25px;
+  }
+}
+
 
 /* FIND A COACH REDUCED MOTION */
 @media(prefers-reduced-motion:reduce){
@@ -354,49 +348,122 @@
 ========================================= */
 
 @media (max-width: 900px) {
-  .request-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    gap: 25px;
-  }
 
-  .request-coach-summary,
-  .session-request-form {
-    padding: 25px;
-  }
-}
-
-@media (max-width: 750px) {
-  .session-request-page {
-    padding-top: 45px;
-    padding-bottom: 70px;
-  }
-
-  .session-request-heading {
-    margin-bottom: 35px;
+  .request-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, .8fr);
+    gap: 30px;
+    min-height: 380px;
   }
 
   .session-request-heading h1 {
-    font-size: clamp(4.5rem, 15vw, 6.5rem);
+    font-size: clamp(4rem, 8vw, 6rem);
+  }
+
+  .session-request-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .session-request-form .training-weather {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .training-weather .weather-heading h3 {
+    font-size: clamp(3rem, 6vw, 4rem);
+  }
+
+  .training-weather .weather-details {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .session-request-page {
+    padding-bottom: 65px;
+  }
+
+  .request-hero {
+    grid-template-columns: 1fr;
+    gap: 35px;
+    min-height: auto;
+    margin-bottom: 50px;
+    padding-block: 65px 55px;
+  }
+
+  .request-hero::after {
+    top: 15%;
+    right: -150px;
+    width: 280px;
+    transform: none;
+  }
+
+  .session-request-heading h1 {
+    font-size: clamp(3.8rem, 15vw, 5.5rem);
+  }
+
+  .session-request-heading > p:last-child {
+    font-size: .85rem;
+  }
+
+  .request-coach-summary {
+    padding: 26px;
+  }
+
+  .request-coach-summary h2 {
+    font-size: clamp(2.8rem, 11vw, 3.8rem);
   }
 
   .request-layout {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    width: calc(100% - (var(--page-gutter) * 2));
   }
 
-  .request-coach-summary,
   .session-request-form {
-    padding: 23px;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 24px 20px;
   }
 
+  .session-request-form .form-heading h2 {
+    font-size: 3rem;
+  }
+
+  .session-request-form .training-weather {
+    padding-block: 20px;
+  }
+
+  .training-weather .weather-panel {
+    padding: 24px 20px;
+  }
+
+  .training-weather .weather-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+
+  .training-weather .weather-temperature {
+    font-size: 4.5rem;
+  }
+
+  .request-form-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .request-form-actions .button,
   .session-request-form button[type="submit"] {
     width: 100%;
+    min-width: 0;
+    justify-content: center;
   }
 
   .request-confirmation {
-    padding: 25px;
+    margin-block: 45px;
   }
 }
+
+  
 
 /* =========================================
    MY SESSIONS RESPONSIVE RULES
@@ -404,99 +471,65 @@
 
 @media (max-width: 900px) {
 
-  .page-shell.my-sessions-page {
-    padding-top: 70px;
-  }
+    .sessions-hero {
+        min-height: 620px;
+    }
 
-  .sessions-section {
-    margin-top: 65px;
-  }
+    .sessions-hero-title {
+        font-size: clamp(4.5rem, 11vw, 7rem);
+    }
 
-  .session-card {
-    padding: 25px;
-    gap: 20px;
-  }
-}
-
-@media (max-width: 700px) {
-
-  .page-shell.my-sessions-page {
-    padding-top: 48px;
-    padding-bottom: 75px;
-  }
-
-  .my-sessions-page > h1 {
-    font-size: clamp(4.5rem, 17vw, 6.5rem);
-  }
-
-  .page-lead {
-    font-size: .85rem;
-  }
-
-  .sessions-section {
-    margin-top: 60px;
-  }
-
-  .sessions-section-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 22px;
-    margin-bottom: 24px;
-  }
-
-  .sessions-section-heading h2 {
-    font-size: clamp(3.2rem, 13vw, 4.3rem);
-  }
-
-  .sessions-section-heading .button {
-    width: 100%;
-  }
-
-  .session-card {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 22px;
-  }
-
-  .session-card-details h3 {
-    font-size: 2rem;
-  }
-
-  .session-card-status {
-    min-width: 0;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 17px;
-    border-top: 1px solid #D3CFC5;
-  }
-
-  .session-card-price {
-    font-size: 1.7rem;
-  }
-
-  .session-card-message {
-    grid-column: auto;
-  }
+    .sessions-hero-content {
+        padding-block: 90px 110px;
+    }
 
 }
 
-@media (max-width: 650px) {
-  .session-more-details {
-    grid-column: auto;
-  }
+@media (max-width: 600px) {
 
-  .button-cancel {
-    grid-column: auto;
-  }
+    .sessions-hero {
+        min-height: 590px;
+        align-items: center;
+        margin-bottom: 55px;
+    }
+
+    .sessions-hero-content {
+        padding-block: 85px 110px;
+    }
+
+    .sessions-hero-title {
+        font-size: clamp(3.7rem, 13vw, 5.5rem);
+        line-height: .86;
+    }
+
+    .sessions-hero-eyebrow {
+        font-size: .59rem;
+        margin-bottom: 24px;
+    }
+
+    .sessions-hero-copy {
+        max-width: 380px;
+        margin-top: 24px;
+        font-size: .88rem;
+    }
+
+    .sessions-hero-actions {
+        margin-top: 26px;
+    }
+
+    .sessions-hero .hero-index {
+        bottom: 24px;
+    }
+
+    .sessions-hero .hero-location {
+        bottom: 22px;
+        max-width: 65%;
+        font-size: .5rem;
+        line-height: 1.5;
+    }
+
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-  .session-card {
-    transition: none;
-  }
-}
 
 /* =========================================
    AUTHENTICATION RESPONSIVE RULES
@@ -700,6 +733,29 @@
   }
 
 }
+
+@media (max-width: 600px) {
+  .request-coach-section {
+    margin-bottom: 40px;
+  }
+
+  .request-coach-summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px 22px;
+  }
+
+  .request-coach-pricing {
+    width: 100%;
+    padding: 18px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--color-line);
+  }
+}
+
+
+
 
 /* Very small screens */
 @media (max-width: 450px) {

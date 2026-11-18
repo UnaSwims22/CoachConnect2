@@ -18,7 +18,7 @@
 
 <body>
 
-   <a class="skip-link" href="#main-content">Skip to content</a>
+  <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="site-header">
         <a class="logo" href="/html/index.html" aria-label="CoachConnect home">
@@ -32,38 +32,114 @@
         </button>
 
         <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-            <a href="/html/index.html" aria-current="page" >Home</a>
+            <a href="/html/index.html" >Home</a>
             <a href="/html/find-coach.html">Find a coach</a>
-            <a href="/html/my-sessions.html">My sessions</a>
+            <a href="/html/my-sessions.html" aria-current="page">My sessions</a>
+            <a href="/html/auth.html" >Account</a>
         </nav>
     </header>
 
   
   <main id="main-content" class="page-shell my-sessions-page">
-    <p class="eyebrow">YOUR COACHING ACTIVITY</p>
-    <h1>My sessions.</h1>
-    <p class="page-lead">Keep track of the coaching sessions you have requested.</p>
-    
-
-    <section class="sessions-section" aria-labelledby="sessions-heading">
-    <div class="sessions-section-heading">
-      <div>
-        <p class="eyebrow">YOUR REQUESTS</p>
-        <h2 id="sessions-heading">Session overview</h2>
+    <section class="sessions-hero" aria-labelledby="sessions-page-title">
+      <div class="sessions-hero-image" role="img"
+        aria-label="Athlete training on a sports court">
       </div>
 
-      <a class="button button-accent" href="/html/find-coach.html">
-        FIND A COACH
-      </a>
-    </div>
+      <div class="sessions-hero-shade"></div>
 
-    <div id="sessions-status" class="notice" role="status" aria-live="polite">
-      Loading your session requests...
-    </div>
+      <div class="sessions-hero-content content-width">
+        <p class="eyebrow sessions-hero-eyebrow">
+          <span class="eyebrow-line"></span>
+          YOUR COACHING ACTIVITY
+        </p>
+        <h1 id="sessions-page-title" class="sessions-hero-title">
+          YOUR <br>
+          SESSIONS.<br>
+          <span>YOUR NEXT MOVE.</span>
+        </h1>
+        <p class="sessions-hero-copy">
+          Keep track of the coaching sessions you have requested, check their status and stay up to date with your training.
+        </p>
 
-    <div id="sessions-list" class="sessions-list"></div>
-  </section>
+        <div class="sessions-hero-actions">
+            <a class="button button-accent"
+               href="/html/find-coach.html">
+                FIND YOUR NEXT COACH
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+      </div>
+
+      <div class="hero-index" aria-hidden="true">
+        <span>03</span>
+        <span class="hero-index-line"></span>
+        <span>04</span>
+      </div>
+
+      <p class="hero-location">
+        YOUR TRAINING. YOUR PROGRESS. YOUR NEXT MOVE.
+      </p>
+
+      <!--
+      <div class="sessions-hero-aside" aria-hidden="true">
+        <span class="sessions-aside-number">01</span>
+        <span class="sessions-aside-label">PLAN. TRAIN. PROGRESS.</span>
+        <span class="sessions-aside-line"></span>
+        <p>Every session<br>moves you forward.</p>
+      </div> 
+    -->
+
+    </section>
+    
+   
+    <section class="sessions-section" aria-labelledby="sessions-heading">
+      <div class="sessions-section-heading">
+        <div>
+          <p class="eyebrow">YOUR REQUESTS</p>
+          <h2 id="sessions-heading">SESSION OVERVIEW <span>.</span></h2>
+          <p class="sessions-section-description">
+            Your coaching activity, all in one place.
+          </p>
+        </div>
+
+        <a class="sessions-find-link" href="/html/find-coach.html">
+          FIND A COACH
+        </a>
+      </div>
+
+      <div class="sessions-panel-top">
+        <span class="sessions-panel-label">MY COACHING ACTIVITY</span>
+        <span class="sessions-panel-indicator">
+          <span></span>LIVE STATUS
+        </span>
+      </div>
+
+      <div id="sessions-status" class="session-status notice" role="status" aria-live="polite">
+        Loading your session requests...
+      </div>
+
+      <div id="sessions-list" class="sessions-list"></div>
+    </section>
+
+    
   </main>
+
+  <section class="sessions-next-step">
+    <div>
+      <p class="eyebrow">KEEP BUILDING</p>
+      <h2>YOUR NEXT STEP<br>STARTS HERE<span>.</span></h2>
+    </div>
+
+    <p>
+      Find a coach who understands your goals and can help
+      you take your game further.
+    </p>
+
+    <a class="button button-dark" href="/html/find-coach.html">
+      EXPLORE COACHES
+    </a>
+  </section>
 
   
 
