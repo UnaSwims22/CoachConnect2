@@ -163,7 +163,8 @@ registerForm.addEventListener("submit", async (event) => {
 
       // Return the user to CoachConnect after email confirmation.
       emailRedirectTo:
-      "https://unaswims22.github.io/coachconnect2/html/auth.html"
+      "https://unaswims22.github.io/CoachConnect2/html/auth.html"
+      //"https://unaswims22.github.io/coachconnect2/html/auth.html"
         //`${window.location.origin}/html/auth.html?resumeBooking=1`
     }
   });
