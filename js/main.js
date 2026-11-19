@@ -6,7 +6,7 @@ const navigation = document.querySelector("#primary-nav");
 if (menuButton && navigation) {
     menuButton.addEventListener("click", () => {
         const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-        menuButton.setAttribute("aria-expanded", String(isOpen));
+        menuButton.setAttribute("aria-expanded", String(!isOpen));
         navigation.classList.toggle("is-open", !isOpen);
     });
 
@@ -19,37 +19,493 @@ if (menuButton && navigation) {
     });
 }
 
+//Homepage Hero Entrance
 async function initialiseHomeAnimation() {
   const hero = document.querySelector(".hero");
   if (!hero) return;
 
   // Check the visitor's motion preference before loading or running animation.
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduceMotion) return;
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)").matches;
+  
+    if (reduceMotion) return;
+
+    const heroImage = hero.querySelector(".hero-image");
+    const heroEyebrow = hero.querySelector(".hero-eyebrow");
+    const heroTitle = hero.querySelector(".hero-title");
+    const heroCopy = hero.querySelector(".hero-copy");
+    const heroActions = hero.querySelector(".hero-actions");
+    const heroIndex = hero.querySelector(".hero-index");
+    const heroLocation = hero.querySelector(".hero-location");
+
+    const heroButtons = heroActions
+        ? heroActions.querySelectorAll("a")
+        : [];
+
+    const heroDetails = [
+        heroIndex,
+        heroLocation
+    ].filter(Boolean);
+
+    if (!heroTitle) return;
+
 
   try {
-    const { gsap } = await import("https://esm.sh/gsap@3.13.0");
+        const { gsap } = await import("https://esm.sh/gsap@3.13.0");
 
-    const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
+        const heroTimeline = gsap.timeline({
 
-    timeline
-      .from(".hero-eyebrow", { y: 18, opacity: 0, duration: 0.35 })
-      .from(".hero-title", { y: 34, opacity: 0, duration: 0.55 }, "-=0.12")
-      .from(".hero-copy", { y: 18, opacity: 0, duration: 0.35 }, "-=0.18")
-      .from(".hero-actions", { y: 14, opacity: 0, duration: 0.3 }, "-=0.12")
-      .from(".hero-index, .hero-location", { opacity: 0, duration: 0.25 }, "-=0.1");
-  } catch (error) {
-    // The content remains visible and usable if GSAP or the network is unavailable.
-    console.info("GSAP animation was not loaded; continuing without motion.", error);
-  }
+            defaults: {
+                ease: "power3.out"
+            },
+
+            onComplete: () => {
+                gsap.set(
+                   [
+                       heroEyebrow,
+                       heroTitle,
+                       heroCopy,
+                       heroActions,
+                       heroIndex,
+                       heroLocation
+                    ].filter(Boolean),
+                    {
+                        autoAlpha: 1,
+                        clearProps: "transform,opacity,visibility,clipPath"
+                    }
+               );
+
+               if (heroImage) {
+                    gsap.set(heroImage, {
+                        scale: 1,
+                        clearProps: "transform"
+                    });
+                }
+            }
+        });
+
+        if (heroImage) {
+
+            heroTimeline.fromTo(
+                heroImage,
+
+                {
+                    scale: 1.12
+                },
+
+                {
+                    scale: 1,
+                    duration: 1.6,
+                    ease: "power2.out"
+                },
+
+                0
+            );
+
+        }
+
+        const eyebrowLine = heroEyebrow
+            ? heroEyebrow.querySelector(".eyebrow-line")
+            : null;
+
+        if (eyebrowLine) {
+
+            heroTimeline.fromTo(
+                eyebrowLine,
+
+                {
+                    scaleX: 0,
+                    transformOrigin: "left center"
+                },
+
+                {
+                    scaleX: 1,
+                    duration: 0.55,
+                    ease: "power3.out"
+                },
+
+                0.2
+            );
+
+        }
+
+        if (heroEyebrow) {
+
+            heroTimeline.fromTo(
+                heroEyebrow,
+
+                {
+                    x: -45,
+                    autoAlpha: 0
+                },
+
+                {
+                    x: 0,
+                    autoAlpha: 1,
+                    duration: 0.65
+                },
+
+                0.2
+            );
+
+        }
+
+        heroTimeline.fromTo(
+            heroTitle,
+            {
+                y: 75,
+                autoAlpha: 0,
+                clipPath: "inset(0 0 100% 0)"
+            },
+
+            {
+                y: 0,
+                autoAlpha: 1,
+                clipPath: "inset(0 0 0% 0)",
+                duration: 1.05,
+                ease: "power4.out"
+            },
+
+            0.48
+        );
+
+        if (heroCopy) {
+
+            heroTimeline.fromTo(
+                heroCopy,
+
+                {
+                    y: 28,
+                    autoAlpha: 0
+                },
+
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.65
+                },
+
+                "-=0.35"
+            );
+
+        }
+
+        if (heroButtons.length) {
+
+            heroTimeline.fromTo(
+                heroButtons,
+
+                {
+                    y: 25,
+                    autoAlpha: 0
+                },
+
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.55,
+                    stagger: 0.14,
+                    ease: "back.out(1.4)"
+                },
+
+                "-=0.25"
+            );
+
+        }
+
+        if (heroDetails.length) {
+            heroTimeline.fromTo(
+                heroDetails,
+
+                {
+                    y: 18,
+                    autoAlpha: 0
+                },
+
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.5,
+                    stagger: 0.12
+                },
+
+                "-=0.1"
+            );
+
+        }
+
+    } catch (error) {
+
+        // Keep all content visible and usable if GSAP fails.
+        console.info(
+            "Homepage GSAP animation unavailable. Continuing without motion.",
+            error
+        );
+
+    }
+
 }
+
 
 initialiseHomeAnimation();
 
 
-// Animate the Find a Coach page hero.
+
+async function initialiseScrollAnimations() {
+
+
+    const homepage = document.querySelector(".hero");
+
+    if (!homepage) return;
+
+
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) return;
+
+    try {
+
+        // Load GSAP and ScrollTrigger.
+        const { gsap } = await import(
+            "https://esm.sh/gsap@3.13.0"
+        );
+
+        const { ScrollTrigger } = await import(
+            "https://esm.sh/gsap@3.13.0/ScrollTrigger"
+        );
+
+        // Register ScrollTrigger with GSAP.
+        gsap.registerPlugin(ScrollTrigger);
+
+        function revealOnScroll(elements, options = {}) {
+
+            const targets = gsap.utils.toArray(elements);
+
+            if (!targets.length) return;
+
+            gsap.fromTo(
+                targets,
+                {
+                    y: options.y ?? 45,
+                    autoAlpha: 0
+                },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: options.duration ?? 0.8,
+                    stagger: options.stagger ?? 0,
+                    ease: options.ease ?? "power3.out",
+
+                    scrollTrigger: {
+                        trigger: options.trigger ?? targets[0],
+                        start: options.start ?? "top 85%",
+                        once: true
+                    }
+                }
+            );
+        }
+
+
+        // 1. SEARCH SECTION
+        const searchSection = document.querySelector(".search-band");
+
+        if (searchSection) {
+
+            revealOnScroll(
+                searchSection.querySelector(".search-band-heading"),
+                {
+                    trigger: searchSection,
+                    y: 35,
+                    duration: 0.8
+                }
+            );
+
+            revealOnScroll(
+                searchSection.querySelector(".quick-search"),
+                {
+                    trigger: searchSection,
+                    y: 35,
+                    duration: 0.8
+                }
+            );
+
+            revealOnScroll(
+                searchSection.querySelector(".search-note"),
+                {
+                    trigger: searchSection,
+                    y: 20,
+                    duration: 0.6
+                }
+            );
+
+        }
+
+        //2. FEATURED COACHES
+        const featuredSection = document.querySelector(
+            ".featured-section"
+        );
+
+        if (featuredSection) {
+
+            revealOnScroll(
+                featuredSection.querySelector(".section-heading"),
+                {
+                    trigger: featuredSection,
+                    y: 40,
+                    duration: 0.8
+                }
+            );
+
+            // Coach cards are inserted dynamically.
+            const coachGrid = featuredSection.querySelector(".coach-grid");
+
+            if (coachGrid) {
+
+                // Wait for dynamically loaded coach cards.
+                const observeCoachCards = () => {
+
+                    const coachCards = coachGrid.querySelectorAll(
+                        ".coach-card"
+                    );
+
+                    if (!coachCards.length) return false;
+
+                    if (coachGrid.dataset.animationInitialised === "true") {
+                        return true;
+                    }
+
+                    coachGrid.dataset.animationInitialised = "true";
+
+
+                    revealOnScroll(
+                        coachCards,
+                        {
+                            trigger: coachGrid,
+                            y: 50,
+                            duration: 0.75,
+                            stagger: 0.15,
+                            start: "top 90%"
+                        }
+                    );
+
+                    return true;
+                };
+
+                // Check whether cards already exist.
+                if (!observeCoachCards()) {
+
+                    const observer = new MutationObserver(() => {
+
+                        if (observeCoachCards()) {
+                            observer.disconnect();
+                        }
+
+                    });
+
+                    observer.observe(coachGrid, {
+                        childList: true,
+                        subtree: true
+                    });
+
+                }
+
+            }
+
+        }
+
+        // 3. HOW IT WORKS
+        const howSection = document.querySelector(".how-section");
+
+        if (howSection) {
+
+            revealOnScroll(
+                howSection.querySelector(".how-intro"),
+                {
+                    trigger: howSection,
+                    y: 45,
+                    duration: 0.9
+                }
+            );
+
+            revealOnScroll(
+                howSection.querySelectorAll(".step-item"),
+                {
+                    trigger: howSection.querySelector(".steps-list"),
+                    y: 35,
+                    duration: 0.7,
+                    stagger: 0.16,
+                    start: "top 85%"
+                }
+            );
+
+        }
+
+        //4. CLOSING CTA
+        const closingCTA = document.querySelector(".closing-cta");
+
+        if (closingCTA) {
+
+            revealOnScroll(
+                closingCTA.querySelector("div"),
+                {
+                    trigger: closingCTA,
+                    y: 40,
+                    duration: 0.8
+                }
+            );
+
+            revealOnScroll(
+                closingCTA.querySelector(".button"),
+                {
+                    trigger: closingCTA,
+                    y: 30,
+                    duration: 0.8
+                }
+            );
+
+        }
+
+        // WEATHER SECTION
+        const weatherSection = document.querySelector(
+            ".weather-section"
+        );
+
+        if (weatherSection) {
+
+            revealOnScroll(
+                [
+                    weatherSection.querySelector(".weather-heading"),
+                    weatherSection.querySelector(".weather-panel")
+                ].filter(Boolean),
+                {
+                    trigger: weatherSection,
+                    y: 40,
+                    duration: 0.85,
+                    stagger: 0.18
+                }
+            );
+
+        }
+
+    } catch (error) {
+
+        console.info(
+            "Scroll animations unavailable. Continuing without motion.",
+            error
+        );
+
+    }
+
+}
+
+
+initialiseScrollAnimations();
+
+
 async function initialiseFindHeroAnimation() {
-    const findHero = document.querySelector(".find-hero-index");
+    const findHero = document.querySelector(".find-hero");
 
     // Only run this animation on the Find a Coach page.
     if (!findHero) return;
@@ -64,40 +520,83 @@ async function initialiseFindHeroAnimation() {
     try {
         const { gsap } = await import("https://esm.sh/gsap@3.13.0");
 
-        // Create a timeline for the hero elements.
+        const background = findHero.querySelector(".find-hero-image");
+        const eyebrow = findHero.querySelector(".hero-eyebrow");
+        const heading = findHero.querySelector(".hero-title");
+        const description = findHero.querySelector(".hero-copy");
+        const index = findHero.querySelector(".hero-index");
+
+   
         const timeline = gsap.timeline({
             defaults: {
-                ease: "power2.out"
+                ease: "power3.out"
             }
         });
 
-        timeline
-            // 1. Introduce the small heading.
-            .from(".find-hero .eyebrow", {
-                y: 18,
-                opacity: 0,
-                duration: 0.35
-            })
+        if (background) {
+            timeline.fromTo(
+                background,
+                {
+                    scale: 1.12,
+                    autoAlpha: 0
+                },
+                {
+                    scale: 1,
+                    autoAlpha: 1,
+                    duration: 1.4,
+                    ease: "power2.out"
+                }
+            );
+        }
 
-            // 2. Reveal the main heading.
-            .from(".find-hero h1", {
-                y: 34,
-                opacity: 0,
-                duration: 0.55
-            }, "-=0.12")
+        if (eyebrow) {
+            timeline.from(
+                eyebrow,
+                {
+                    x: -30,
+                    autoAlpha: 0,
+                    duration: 0.6
+                },
+                "-=0.9"
+            );
+        }
 
-            // 3. Reveal the supporting description.
-            .from(".find-hero-inner > p:not(.eyebrow)", {
-                y: 18,
-                opacity: 0,
-                duration: 0.35
-            }, "-=0.18")
+        if (heading) {
+            timeline.from(
+                heading,
+                {
+                    y: 65,
+                    autoAlpha: 0,
+                    duration: 0.85,
+                    ease: "power4.out"
+                },
+                "-=0.5"
+            );
+        }
 
-            // 4. Reveal the page index.
-            .from(".find-hero-index", {
-                opacity: 0,
-                duration: 0.3
-            }, "-=0.1");
+        if (description) {
+            timeline.from(
+                description,
+                {
+                    y: 25,
+                    autoAlpha: 0,
+                    duration: 0.6
+                },
+                "-=0.45"
+            );
+        }
+
+        if (index) {
+            timeline.from(
+                index,
+                {
+                    x: 25,
+                    autoAlpha: 0,
+                    duration: 0.55
+                },
+                "-=0.4"
+            );
+        }
 
     } catch (error) {
         console.info(
@@ -107,7 +606,6 @@ async function initialiseFindHeroAnimation() {
     }
 }
 
-// Start the Find a Coach hero animation.
 initialiseFindHeroAnimation();
 
 

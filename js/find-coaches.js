@@ -50,67 +50,74 @@ let hasRenderedDirectory = false;
 
 // Load GSAP once and reuse it for future animations.
 let gsapPromise;
+// Cache the ScrollTrigger import.
+let scrollTriggerPromise;
+
+// Keep track of the horizontal animation.
+let horizontalScrollTween = null;
+
+// Prevent multiple resize listeners.
+let horizontalResizeListenerAdded = false;
+
+// Keep track of the current filtering animation.
+let activeFilterTimeline = null;
+
+// Prevent older animations from updating newer search results.
+let renderVersion = 0;
+
 
 function animateDirectoryCards(isInitialLoad) {
+
   const reduceMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
-  // Do not animate if the user prefers reduced motion.
   if (reduceMotion) return;
 
   const cards = grid.querySelectorAll(".directory-card");
 
   if (!cards.length) return;
 
-  // Import GSAP only once.
   if (!gsapPromise) {
     gsapPromise = import("https://esm.sh/gsap@3.13.0");
   }
 
   gsapPromise
     .then(({ gsap }) => {
-      // Prevent overlapping animations.
-      gsap.killTweensOf(cards);
 
-      if (isInitialLoad) {
-        // More noticeable entrance animation on initial page load.
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 14 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: 0.035,
-            ease: "power2.out",
-            overwrite: true
-          }
-        );
-      } else {
-        // Shorter transition when search results or filters change.
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 8 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.2,
-            stagger: 0.02,
-            ease: "power1.out",
-            overwrite: true
-          }
-        );
-      }
+      // Wait until the browser has had an opportunity to render the cards.
+      requestAnimationFrame(() => {
+
+        const currentCards = grid.querySelectorAll(".directory-card");
+
+        if (!currentCards.length) return;
+
+        // Set the starting appearance.
+        gsap.set(currentCards, {
+          autoAlpha: 0,
+          y: 24,
+          scale: 0.98
+        });
+
+        // Animate the cards into view.
+        gsap.to(currentCards, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: isInitialLoad ? 0.65 : 0.4,
+          stagger: isInitialLoad ? 0.12 : 0.07,
+          ease: "power3.out",
+          clearProps: "transform"
+        });
+
+      });
+
     })
     .catch((error) => {
       console.warn("Directory animation unavailable:", error);
     });
 }
 
-
-// Convert a Supabase record into the structure
-// already used by the website.
 function formatCoach(record) {
   const coachSport = record.coach_sports?.[0]?.sport || "Sport";
 
@@ -324,26 +331,244 @@ function updateTray() {
 }
 
 function render() {
+
+  const currentRender = ++renderVersion;
   const results = filteredCoaches();
 
-  grid.innerHTML = results.map(card).join("");
-
-  grid.setAttribute("aria-busy", "false");
-
-  count.textContent =
-    `${results.length} ${results.length === 1 ? "coach" : "coaches"} found`;
-
-  $("#empty-state").hidden = results.length !== 0;
-
-  updateTray();
-
-   // Determine whether this is the first directory render.
   const isInitialLoad = !hasRenderedDirectory;
 
-  hasRenderedDirectory = true;
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
 
-  // Animate the newly displayed cards.
-  animateDirectoryCards(isInitialLoad);
+
+  // Update the directory after the exit animation.
+  function updateDirectory() {
+
+    // Ignore outdated filtering operations.
+    if (currentRender !== renderVersion) return;
+
+    grid.innerHTML = results.map(card).join("");
+
+    grid.setAttribute("aria-busy", "false");
+
+    count.textContent =
+      `${results.length} ${results.length === 1 ? "coach" : "coaches"} found`;
+
+    $("#empty-state").hidden = results.length !== 0;
+
+    updateTray();
+
+    hasRenderedDirectory = true;
+
+    // Reuse the working entrance animation.
+    animateDirectoryCards(false);
+    initialiseHorizontalCoachScroll();
+  }
+
+  if (
+    isInitialLoad ||
+    reduceMotion ||
+    !grid.querySelector(".directory-card")
+  ) {
+
+    if (activeFilterTimeline) {
+      activeFilterTimeline.kill();
+      activeFilterTimeline = null;
+    }
+
+    if (isInitialLoad) {
+      grid.innerHTML = results.map(card).join("");
+
+      grid.setAttribute("aria-busy", "false");
+
+      count.textContent =
+        `${results.length} ${results.length === 1 ? "coach" : "coaches"} found`;
+
+      $("#empty-state").hidden = results.length !== 0;
+
+      updateTray();
+
+      hasRenderedDirectory = true;
+
+      animateDirectoryCards(true);
+      initialiseHorizontalCoachScroll();
+
+    } else {
+      updateDirectory();
+    }
+
+    return;
+  }
+
+
+  grid.setAttribute("aria-busy", "true");
+
+
+  if (!gsapPromise) {
+    gsapPromise = import("https://esm.sh/gsap@3.13.0");
+  }
+
+
+  gsapPromise
+    .then(({ gsap }) => {
+
+      if (currentRender !== renderVersion) return;
+
+      if (activeFilterTimeline) {
+        activeFilterTimeline.kill();
+      }
+
+      const existingCards = grid.querySelectorAll(".directory-card");
+
+      if (!existingCards.length) {
+        updateDirectory();
+        return;
+      }
+
+      // Animate the current cards out.
+      activeFilterTimeline = gsap.to(existingCards, {
+
+        autoAlpha: 0,
+        y: -12,
+        scale: 0.985,
+
+        duration: 0.2,
+        stagger: 0.035,
+
+        ease: "power2.in",
+
+        onComplete: () => {
+
+          if (currentRender !== renderVersion) return;
+
+          updateDirectory();
+
+          activeFilterTimeline = null;
+        }
+
+      });
+
+    })
+    .catch((error) => {
+
+      console.warn("Filtering animation unavailable:", error);
+
+      updateDirectory();
+
+    });
+
+}
+
+
+
+async function initialiseHorizontalCoachScroll() {
+
+  const viewport = document.querySelector(
+    ".directory-horizontal-viewport"
+  );
+
+  if (!viewport) return;
+
+  // Remove the previous horizontal animation before rebuilding it.
+  if (horizontalScrollTween) {
+    horizontalScrollTween.scrollTrigger?.kill();
+    horizontalScrollTween.kill();
+    horizontalScrollTween = null;
+  }
+
+  // Reset the horizontal track.
+  if (!gsapPromise) {
+    gsapPromise = import("https://esm.sh/gsap@3.13.0");
+  }
+
+  try {
+    const { gsap } = await gsapPromise;
+
+    gsap.set(grid, {
+      clearProps: "transform"
+    });
+
+    // Only activate horizontal scrolling on desktop.
+    if (
+      window.innerWidth < 900 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    // Load ScrollTrigger.
+    if (!scrollTriggerPromise) {
+      scrollTriggerPromise = import(
+        "https://esm.sh/gsap@3.13.0/ScrollTrigger"
+      );
+    }
+
+    const { ScrollTrigger } = await scrollTriggerPromise;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Wait for the cards to finish rendering.
+    requestAnimationFrame(() => {
+
+      const distance =
+        grid.scrollWidth - viewport.clientWidth;
+
+      // No animation is needed if all cards already fit.
+      if (distance <= 0) return;
+
+      // Move the cards horizontally as the user scrolls vertically.
+      horizontalScrollTween = gsap.to(grid, {
+
+        x: () => -(
+          grid.scrollWidth - viewport.clientWidth
+        ),
+
+        ease: "none",
+
+        scrollTrigger: {
+
+          trigger: viewport,
+
+          start: "top top+=90",
+
+          end: () => `+=${grid.scrollWidth - viewport.clientWidth}`,
+
+          pin: true,
+
+          scrub: 1,
+
+          anticipatePin: 1,
+
+          invalidateOnRefresh: true
+
+        }
+
+      });
+
+      // Recalculate the scroll distance.
+      ScrollTrigger.refresh();
+
+    });
+
+  } catch (error) {
+    console.warn(
+      "Horizontal coach scrolling unavailable:",
+      error
+    );
+  }
+}
+
+
+function initialiseHorizontalResize() {
+
+  if (horizontalResizeListenerAdded) return;
+
+  horizontalResizeListenerAdded = true;
+
+  window.addEventListener("resize", () => {
+    initialiseHorizontalCoachScroll();
+  });
 }
 
 
@@ -487,7 +712,9 @@ $("#close-comparison").addEventListener("click", () => {
 
 $("#empty-reset").addEventListener("click", clearFilters);
 
-// Start the directory by retrieving the database records.
+
+
+initialiseHorizontalResize();
 loadCoaches();
 
 

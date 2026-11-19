@@ -199,39 +199,29 @@
   }
 }
 
-
-@media (max-width: 768px) {
-  .find-hero {
-    min-height: 620px;
+@media (max-width: 899px) {
+  .directory-horizontal-viewport {
+    overflow: visible;
   }
 
-  .find-hero-inner {
-    padding-block: 75px 100px;
+  .directory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
   }
 
-  .find-hero .hero-title {
-    font-size: clamp(4.5rem, 12vw, 7rem);
-  }
-
-  .find-hero-image {
-    background-position: 58% center;
-  }
-
-  .find-hero-shade {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(10,12,10,.92) 0%,
-        rgba(10,12,10,.72) 65%,
-        rgba(10,12,10,.4) 100%
-      ),
-      linear-gradient(
-        0deg,
-        rgba(10,12,10,.5),
-        transparent 50%
-      );
+  .directory-card {
+    width: 100%;
+    min-width: 0;
   }
 }
+
+@media (max-width: 600px) {
+  .directory-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 @media (max-width: 480px) {
   .find-hero {

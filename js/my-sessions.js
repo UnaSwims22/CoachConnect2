@@ -158,9 +158,137 @@ async function animateSessionCards() {
       }
     );
 
+    const statusBadges = sessionsList.querySelectorAll(
+      ".session-card-status .session-status"
+    );
+
+    gsap.fromTo(
+      statusBadges,
+      {
+        scale: 1,
+        opacity: 0,
+        y: 5
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        stagger: 0.1,
+        delay: 0.2,
+        ease: "back.out(1.7)",
+        overwrite: true
+      }
+    );
+
   } catch (error) {
     console.info("Session card animation unavailable.", error);
   }
+}
+
+// Animate the expandable information inside each session card.
+function initialiseSessionDetailsAnimations() {
+
+  sessionsList.addEventListener("click", async (event) => {
+
+    const summary = event.target.closest(".session-more-details summary");
+
+    if (!summary) return;
+
+    const details = summary.closest(".session-more-details");
+    const panel = details.querySelector(".session-extra-information");
+    const icon = summary.querySelector(".session-details-icon");
+
+    if (!details || !panel) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (details.dataset.animating === "true") return;
+
+    details.dataset.animating = "true";
+
+    try {
+      const { gsap } = await loadGSAP();
+
+      // Kill any existing animation on these elements.
+      gsap.killTweensOf(panel);
+
+      if (!details.open) {
+
+        details.open = true;
+
+        gsap.set(panel, {
+          height: 0,
+          autoAlpha: 0,
+          overflow: "hidden"
+        });
+
+        gsap.to(panel, {
+          height: "auto",
+          autoAlpha: 1,
+          duration: 0.4,
+          ease: "power2.out",
+          onComplete: () => {
+            gsap.set(panel, {
+              clearProps: "height,overflow,opacity,visibility"
+            });
+
+            delete details.dataset.animating;
+          }
+        });
+
+        // Rotate the plus indicator.
+        if (icon) {
+          gsap.to(icon, {
+            rotation: 45,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
+
+      } else {
+
+        gsap.to(panel, {
+          height: 0,
+          autoAlpha: 0,
+          duration: 0.25,
+          ease: "power2.in",
+          onComplete: () => {
+
+            details.open = false;
+
+            gsap.set(panel, {
+              clearProps: "height,overflow,opacity,visibility"
+            });
+
+            delete details.dataset.animating;
+          }
+        });
+
+
+        if (icon) {
+          gsap.to(icon, {
+            rotation: 0,
+            duration: 0.25,
+            ease: "power2.out"
+          });
+        }
+      }
+
+    } catch (error) {
+
+      // If GSAP fails to load, preserve the normal expand/collapse behaviour.
+      console.error("Session details animation failed:", error);
+
+      details.open = !details.open;
+
+      delete details.dataset.animating;
+    }
+  });
 }
 
 
@@ -196,6 +324,12 @@ function formatStatus(status) {
 function createSessionCard(request) {
   const card = document.createElement("article");
   card.className = "session-card";
+
+  const accentLine = document.createElement("span");
+  accentLine.className = "session-card-accent";
+  accentLine.setAttribute("aria-hidden", "true");
+
+  card.append(accentLine);
 
   // Coach and session information.
   const details = document.createElement("div");
@@ -250,7 +384,14 @@ function createSessionCard(request) {
   moreDetails.className = "session-more-details";
 
   const summary = document.createElement("summary");
-  summary.textContent = "View request details";
+
+  summary.append(document.createTextNode("View request details"));
+  const detailsIcon = document.createElement("span");
+  detailsIcon.className = "session-details-icon";
+  detailsIcon.setAttribute("aria-hidden", "true");
+  detailsIcon.textContent = "+";
+
+  summary.append(detailsIcon);
 
   const extraInformation = document.createElement("div");
   extraInformation.className = "session-extra-information";
@@ -436,6 +577,5 @@ sessionsList.addEventListener("click", async (event) => {
 });
 
 animateSessionsPage();
-
-// Load requests when the page opens.
+initialiseSessionDetailsAnimations();
 loadSessions();
